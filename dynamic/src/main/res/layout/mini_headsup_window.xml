@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.flyme.systemui.miniheadsup.MiniHeadsupWindow xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                tools:context=".DynamicNotificationDemo"
+                tools:layout_height="100dp"
+                tools:layout_width="200dp">
+
+    <com.flyme.systemui.miniheadsup.MiniHeadsupSecondGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_marginLeft="10dp"
+        tools:layout_marginRight="10dp"
+        android:id="@+id/second_group_1">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:id="@+id/second_icon_1"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            tools:text="123456"
+            android:maxLines="1"
+            android:id="@+id/second_text_1"/>
+
+    </com.flyme.systemui.miniheadsup.MiniHeadsupSecondGroup>
+
+    <com.flyme.systemui.miniheadsup.MiniHeadsupSecondGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_marginLeft="10dp"
+        tools:layout_marginRight="10dp"
+        android:id="@+id/second_group_2">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:id="@+id/second_icon_2"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            tools:text="123456"
+            android:maxLines="1"
+            android:id="@+id/second_text_2"/>
+
+    </com.flyme.systemui.miniheadsup.MiniHeadsupSecondGroup>
+
+
+    <com.flyme.systemui.miniheadsup.MiniHeadsupFirstGroup
+        android:id="@+id/first_group"
+        tools:layout_marginLeft="10dp"
+        tools:layout_marginRight="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/first_icon"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="123456"
+            android:maxLines="1"
+            android:id="@+id/first_text"
+            android:layout_weight="1"/>
+    </com.flyme.systemui.miniheadsup.MiniHeadsupFirstGroup>
+
+</com.flyme.systemui.miniheadsup.MiniHeadsupWindow>

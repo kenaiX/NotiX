@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">GameMode</string>
+    <string name="noti">通知</string>
+    <string name="game">福利</string>
+    <string name="settings">设置</string>
+    <string name="summary">按住拖动调整顺序</string>
+
+</resources>

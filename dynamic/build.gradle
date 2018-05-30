@@ -1,0 +1,41 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
+    defaultConfig {
+        applicationId "com.netease.onmyoji"
+        //applicationId "com.flyme.systemui.dynamic"
+        minSdkVersion 22
+        targetSdkVersion 22
+        versionCode 11
+        versionName "2.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    productFlavors {
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.0.2'
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'com.meizu.flyme.sdk:flyme-activeview:3.2.6'
+
+   // compile(name: 'flyme-activeview-3.2.8', ext: 'aar')
+}

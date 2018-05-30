@@ -1,0 +1,23 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportHeight="100"
+    android:viewportWidth="100">
+    <path
+        android:strokeWidth="12"
+        android:pathData="@string/path_circle" />
+    <path
+        android:name="eye0"
+        android:fillColor="@android:color/holo_purple"
+        android:pathData="@string/path_face_left_eye" />
+    <path
+        android:name="eye1"
+        android:fillColor="@android:color/holo_purple"
+        android:pathData="@string/path_face_right_eye" />
+    <path
+        android:name="mouth"
+        android:pathData="@string/path_face_mouth_sad"
+        android:strokeColor="@android:color/holo_purple"
+        android:strokeLineCap="round"
+        android:strokeWidth="12" />
+</vector>

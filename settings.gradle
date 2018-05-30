@@ -1,0 +1,6 @@
+//include ':animationdebug'
+include ':app', ':dear'
+//include ':childmode'
+include ':dynamic'
+include ':flymeicon'
+include ':gamemode'

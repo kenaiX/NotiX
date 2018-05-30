@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.flyme.systemuitools.gamemode.view.StageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <com.flyme.systemuitools.gamemode.view.HeadView
+        android:id="@+id/headFrame"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/game_mode_proview_head_height"
+        tools:layout_editor_absoluteY="29dp">
+
+        <ImageView
+            android:id="@+id/panda"
+            android:layout_width="@dimen/game_mode_proview_head_panda_size"
+            android:layout_height="@dimen/game_mode_proview_head_panda_size"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/game_panda" />
+
+        <com.flyme.systemuitools.gamemode.view.BatteryView
+            android:id="@+id/batteryFrame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="11dp"
+            android:layout_toRightOf="@id/panda">
+
+
+            <ImageView
+                android:id="@+id/batteryIcon"
+                android:layout_width="21.33dp"
+                android:layout_height="11.33dp"
+                android:layout_marginTop="4dp"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/batteryLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_toRightOf="@+id/batteryIcon"
+                android:textSize="14sp"
+                tools:text="test" />
+
+            <TextView
+                android:id="@+id/baterrySummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/batteryLevel"
+                android:textSize="11sp"
+                tools:text="test" />
+
+        </com.flyme.systemuitools.gamemode.view.BatteryView>
+
+        <ImageView
+            android:id="@+id/moreAppsMenu"
+            android:layout_width="@dimen/game_mode_proview_apps_size"
+            android:layout_height="@dimen/game_mode_proview_apps_size"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="22dp"
+            android:src="@drawable/game_mode_more_apps_menu" />
+
+        <com.flyme.systemuitools.gamemode.view.QuickAppsView
+            android:id="@+id/quckAppsFrame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_toStartOf="@+id/moreAppsMenu">
+
+            <ImageView
+                android:id="@+id/quick4"
+                android:layout_width="@dimen/game_mode_proview_apps_size"
+                android:layout_height="@dimen/game_mode_proview_apps_size"
+                tools:layout_marginEnd="40dp"
+                android:src="@mipmap/ic_launcher" />
+
+            <ImageView
+                android:id="@+id/quick3"
+                android:layout_width="@dimen/game_mode_proview_apps_size"
+                android:layout_height="@dimen/game_mode_proview_apps_size"
+                tools:layout_marginEnd="40dp"
+                android:src="@mipmap/ic_launcher" />
+
+            <ImageView
+                android:id="@+id/quick2"
+                android:layout_width="@dimen/game_mode_proview_apps_size"
+                android:layout_height="@dimen/game_mode_proview_apps_size"
+                tools:layout_marginEnd="40dp"
+                android:src="@mipmap/ic_launcher" />
+
+            <ImageView
+                android:id="@+id/quick1"
+                android:layout_width="@dimen/game_mode_proview_apps_size"
+                android:layout_height="@dimen/game_mode_proview_apps_size"
+                tools:layout_marginEnd="40dp"
+                android:src="@mipmap/ic_launcher" />
+        </com.flyme.systemuitools.gamemode.view.QuickAppsView>
+    </com.flyme.systemuitools.gamemode.view.HeadView>
+
+    <LinearLayout
+        android:id="@+id/tabFrame"
+        android:layout_width="@dimen/game_mode_proview_tab_width"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headFrame"
+        android:orientation="vertical"
+        android:background="#0A000000">
+
+        <TextView
+            android:id="@+id/tabNoti"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/noti" />
+
+        <TextView
+            android:id="@+id/tabGame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/game" />
+
+        <TextView
+            android:id="@+id/tabSettings"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/settings" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/detailFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headFrame"
+        android:layout_toRightOf="@id/tabFrame">
+    </FrameLayout>
+
+    <View
+        android:layout_width="0.67dp"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headFrame"
+        android:layout_toRightOf="@id/tabFrame"
+        android:background="#16000000"/>
+
+    <com.flyme.systemuitools.gamemode.view.MoreAppsView
+        android:id="@+id/moreAppsFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headFrame"
+        android:background="#FFFFFF"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/moreapps_summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/summary" />
+
+        <ListView
+            android:id="@+id/moreAppslist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/moreapps_summary"
+            android:divider="@null" />
+    </com.flyme.systemuitools.gamemode.view.MoreAppsView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_below="@+id/headFrame"
+        android:background="@drawable/game_pro_shadow"/>
+
+    <ImageView
+        android:id="@+id/dragView"
+        android:layout_width="@dimen/game_mode_proview_apps_size"
+        android:layout_height="@dimen/game_mode_proview_apps_size" />
+
+</com.flyme.systemuitools.gamemode.view.StageView>
