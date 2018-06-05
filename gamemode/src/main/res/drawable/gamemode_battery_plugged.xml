@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2008 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- 电池外框 -->
+    <item
+        android:id="@android:id/background"
+        android:drawable="@drawable/gamemode_battery_background"/>
+    <!-- 电池芯 -->
+    <item
+        android:id="@+id/battery_core"
+        android:bottom="@dimen/aod_battery_core_bottom"
+        android:left="@dimen/aod_battery_core_left"
+        android:right="@dimen/aod_battery_core_right"
+        android:top="@dimen/aod_battery_core_top">
+        <scale
+            android:drawable="@drawable/gamemode_battery_core_normal"
+            android:scaleGravity="right"
+            android:scaleWidth="100%"
+            android:scaleHeight="0%" />
+    </item>
+
+</layer-list>

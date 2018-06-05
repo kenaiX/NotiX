@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 
+import com.flyme.systemuitools.aod.model.BatteryStatus;
+
 public abstract class BatteryObserver {
 
-    public abstract void onBatteryChange(int level, String time, boolean isCharging);
+    public abstract void onBatteryChange(BatteryStatus status,int level, String time, boolean isCharging);
 
     Context mContext;
 
@@ -19,7 +21,9 @@ public abstract class BatteryObserver {
             int level = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 //            int status = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS);
             int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
-            onBatteryChange(level, status == BatteryManager.BATTERY_STATUS_CHARGING ? "充电中" : "未充电", status == BatteryManager.BATTERY_STATUS_CHARGING);
+            int health = intent.getIntExtra(BatteryManager.EXTRA_HEALTH, 0);
+            int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
+            onBatteryChange(new BatteryStatus(status,level,plugged,health), level, status == BatteryManager.BATTERY_STATUS_CHARGING ? "充电中" : "未充电", status == BatteryManager.BATTERY_STATUS_CHARGING);
         }
     };
 

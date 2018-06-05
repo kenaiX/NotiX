@@ -12,10 +12,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.flyme.systemuitools.R;
+import com.flyme.systemuitools.aod.model.BatteryStatus;
+import com.flyme.systemuitools.aod.view.AODBatteryView;
 import com.flyme.systemuitools.gamemode.utils.BatteryObserver;
 
 public class BatteryView extends RelativeLayout {
-    private ImageView mBatteryIcon;
+    private AODBatteryView mBatteryIcon;
     private TextView mBatteryLevel;
     private TextView mBaterrySummary;
     private BatteryObserver mBatteryObserver;
@@ -44,24 +46,22 @@ public class BatteryView extends RelativeLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mBatteryIcon = (ImageView) findViewById(R.id.batteryIcon);
+        mBatteryIcon = (AODBatteryView) findViewById(R.id.batteryIcon);
         mBatteryLevel = (TextView) findViewById(R.id.batteryLevel);
         mBaterrySummary = (TextView) findViewById(R.id.baterrySummary);
 
         mBatteryObserver = new BatteryObserver() {
             @Override
-            public void onBatteryChange(int level, String time, boolean isCharging) {
+            public void onBatteryChange(BatteryStatus status,int level, String time, boolean isCharging) {
                 mBatteryLevel.setText(level + "%");
                 if (level < 10) {
                     mBaterrySummary.setText(time);
+                    mBaterrySummary.setVisibility(VISIBLE);
                 } else {
                     mBaterrySummary.setText(null);
+                    mBaterrySummary.setVisibility(GONE);
                 }
-                if (isCharging) {
-                    mBatteryIcon.setColorFilter(Color.GREEN);
-                } else {
-                    mBatteryIcon.clearColorFilter();
-                }
+                mBatteryIcon.updateBatteryInfo(status);
             }
         };
     }

@@ -38,7 +38,7 @@ public class ProjectApplication extends Application {
                 super.onInstallPluginFailed(path, code);
                 //插件安装失败处理
                 Log.e("GameApplication","onInstallPluginFailed:" +code);
-                RxBus.get().post(new GameEvents.PluginInstalled(true));
+                RxBus.get().post(new GameEvents.PluginInstalled(false));
             }
         });
 

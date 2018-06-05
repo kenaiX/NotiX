@@ -1,7 +1,9 @@
 package com.flyme.systemuitools.gamemode.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -39,15 +41,18 @@ public class MoreAppsView extends RelativeLayout implements Dragable {
     AppInfo[] mApps;
     ListAdapter adapter = new ListAdapter();
 
+    boolean mNeedSummary;
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         mListView = (ListView) findViewById(R.id.moreAppslist);
         summaryView = findViewById(R.id.moreapps_summary);
+        mNeedSummary = getContext().getSharedPreferences("game_mode", Context.MODE_PRIVATE).getBoolean("need_moreapp_summary",true);
     }
 
     public void init(List<AppInfo> list,int everyLine) {
-        mApps = new AppInfo[list.size() + 4];
+        mApps = new AppInfo[list.size() + QuickAppsView.NUM_APPS];
         COLUMNS = everyLine;
         for (int i = 0, n = list.size(); i < n; i++) {
             mApps[i] = list.get(i);
@@ -58,7 +63,17 @@ public class MoreAppsView extends RelativeLayout implements Dragable {
     }
 
     public void setSummary(boolean show){
-        summaryView.setVisibility(show?VISIBLE:INVISIBLE);
+        if(show && mNeedSummary){
+            summaryView.setVisibility(VISIBLE);
+        }else{
+            if(!show && mNeedSummary){
+                getContext().getSharedPreferences("game_mode", Context.MODE_PRIVATE).edit().putBoolean("need_moreapp_summary",false).apply();
+                mNeedSummary = false;
+                //summaryView.setVisibility(INVISIBLE);
+            }else {
+                summaryView.setVisibility(GONE);
+            }
+        }
     }
 
     @Override
@@ -121,7 +136,7 @@ public class MoreAppsView extends RelativeLayout implements Dragable {
     }
 
     private void addInfoToList(AppInfo childInfo) {
-        for (int i = mApps.length - 4; i < mApps.length; i++) {
+        for (int i = mApps.length - QuickAppsView.NUM_APPS; i < mApps.length; i++) {
             if (mApps[i] == null) {
                 mApps[i] = childInfo;
                 return;
@@ -140,7 +155,15 @@ public class MoreAppsView extends RelativeLayout implements Dragable {
 
     @Override
     public void onRemovedCompleted(View originView) {
-
+        AppInfo[] temp = new AppInfo[mApps.length];
+        int index = 0;
+        for(AppInfo info :mApps){
+            if(info!=null){
+                temp[index++] = info;
+            }
+        }
+        mApps = temp;
+        adapter.notifyDataSetChanged();
     }
 
     class ListAdapter extends BaseAdapter {

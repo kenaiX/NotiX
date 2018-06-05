@@ -11,7 +11,8 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
-import android.os.RemoteException;
+import android.os.Process;
+import android.os.UserHandle;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -31,8 +32,10 @@ import com.flyme.systemuitools.gamemode.events.ConfigChangeEvents;
 import com.flyme.systemuitools.gamemode.events.DragEvents;
 import com.flyme.systemuitools.gamemode.events.UIEvents;
 import com.flyme.systemuitools.gamemode.model.AppInfo;
+import com.flyme.systemuitools.gamemode.utils.QuickAppsHelper;
 import com.flyme.systemuitools.gamemode.view.GameDetailView;
 import com.flyme.systemuitools.gamemode.view.QuickAppsView;
+import com.flyme.systemuitools.gamemode.view.RedPointFrameLayout;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.meizu.flyme.launcher.IExternalService;
@@ -45,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ProViewControler implements View.OnClickListener {
     final int DETAIL_VIEW_TYPE_NOTI = 0;
@@ -62,15 +66,13 @@ public class ProViewControler implements View.OnClickListener {
     private final com.flyme.systemuitools.gamemode.view.BatteryView mBatteryFrame;
     private final ImageView mMoreAppsMenu;
     private final com.flyme.systemuitools.gamemode.view.MoreAppsView mMoreAppsFrame;
-    private final TextView mTabNoti;
-    private final TextView mTabGame;
+    private final RedPointFrameLayout mTabNoti;
+    private final RedPointFrameLayout mTabGame;
     private final TextView mTabSettings;
     private final FrameLayout mDetailFrame;
     private final QuickAppsView mQuckAppsFrame;
 
     private final SharedPreferences mSharedPreferences;
-
-    List<LauncherActivityInfo> mAllApps;
 
     private final Context mContext;
 
@@ -79,7 +81,7 @@ public class ProViewControler implements View.OnClickListener {
     public static boolean sLand = false;
 
     public interface CallBack {
-        List<AppInfo> loadAllApps(List<QuickAppsRecord> filter);
+        List<AppInfo> loadAllApps();
 
         AppInfo loadApps(String pkg, String name, int userid);
 
@@ -90,6 +92,8 @@ public class ProViewControler implements View.OnClickListener {
         String getGamePkg();
 
         void onShowChange(boolean isShow);
+
+        int getWelfareNum();
     }
 
     private final CallBack mCallBack;
@@ -119,9 +123,17 @@ public class ProViewControler implements View.OnClickListener {
     public void onBatteryChange(UIEvents.BatteryChange event) {
     }
 
+
+    @Subscribe
+    public void onNotificationChange(UIEvents.NotificationUpdate event) {
+        if(mDetailState!= DETAIL_STATE_TYPE_NOTI) {
+            mTabNoti.toggleGameRedPoint(true);
+        }
+    }
+
     @Subscribe
     public void onStartDrag(DragEvents.StartDrag event) {
-        toggleMoreApps(true,false);
+        toggleMoreApps(true, false);
     }
 
     @Subscribe
@@ -141,16 +153,15 @@ public class ProViewControler implements View.OnClickListener {
     }
 
     @Subscribe
-    public void onSaveQuickAppsConfig(ConfigChangeEvents.QuickAppsConfigChange event) {
-        StringBuilder sb = new StringBuilder();
+    public void onSaveQuickAppsConfig(ConfigChangeEvents.OnSaveQuickAppsConfig event) {
         quickAppsList.clear();
         for (AppInfo info : event.list) {
             if (info != null) {
-                sb.append(QuickAppsRecord.AppInfo2String(info)).append(";");
                 quickAppsList.add(QuickAppsRecord.fromAppInfo(info));
             }
         }
-        mSharedPreferences.edit().putString("quick_apps_list", sb.toString()).apply();
+        QuickAppsHelper.save(mContext, event.list);
+        RxBus.get().post(new ConfigChangeEvents.OnQuickAppsConfigChanged());
     }
 
     public void unbindBatteryService() {
@@ -170,11 +181,11 @@ public class ProViewControler implements View.OnClickListener {
         DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
         if (dm.widthPixels < dm.heightPixels) {
             sLand = false;
-        }else{
+        } else {
             sLand = true;
         }
 
-        mProView = View.inflate(context, R.layout.game_pro_main_land, null);
+        mProView = View.inflate(context, R.layout.game_pro_main, null);
 
         mHeadFrame = (RelativeLayout) mProView.findViewById(R.id.headFrame);
         mPanda = (ImageView) mProView.findViewById(R.id.panda);
@@ -182,8 +193,8 @@ public class ProViewControler implements View.OnClickListener {
         mMoreAppsMenu = (ImageView) mProView.findViewById(R.id.moreAppsMenu);
         mQuckAppsFrame = (com.flyme.systemuitools.gamemode.view.QuickAppsView) mProView.findViewById(R.id.quckAppsFrame);
 
-        mTabNoti = (TextView) mProView.findViewById(R.id.tabNoti);
-        mTabGame = (TextView) mProView.findViewById(R.id.tabGame);
+        mTabNoti = (RedPointFrameLayout) mProView.findViewById(R.id.tabNoti);
+        mTabGame = (RedPointFrameLayout)mProView.findViewById(R.id.tabGame);
         mTabSettings = (TextView) mProView.findViewById(R.id.tabSettings);
 
         //用来放置详情页
@@ -192,6 +203,10 @@ public class ProViewControler implements View.OnClickListener {
         mMoreAppsFrame = (com.flyme.systemuitools.gamemode.view.MoreAppsView) mProView.findViewById(R.id.moreAppsFrame);
         //用来放置Tab
         mTabFrame = mProView.findViewById(R.id.tabFrame);
+
+        Resources resources = mContext.getResources();
+        mTabNoti.setTitle(resources.getString(R.string.noti));
+        mTabGame.setTitle(resources.getString(R.string.game));
 
         mMoreAppsMenu.setOnClickListener(this);
         mTabNoti.setOnClickListener(this);
@@ -223,7 +238,21 @@ public class ProViewControler implements View.OnClickListener {
 
             }
         }, Service.BIND_AUTO_CREATE);
+
+        //quick—apps，todo区分用户
+        quickAppsList = QuickAppsHelper.getList(mContext);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mAppApps = mCallBack.loadAllApps();
+                mAppsloadFinished.set(true);
+            }
+        }).start();
     }
+
+    List<AppInfo> mAppApps;
+    final AtomicBoolean mAppsloadFinished = new AtomicBoolean(false);
 
     public static class QuickAppsRecord {
         public ComponentName componentName;
@@ -242,7 +271,8 @@ public class ProViewControler implements View.OnClickListener {
 
         public static QuickAppsRecord fromAppInfo(AppInfo info) {
             ComponentName componentName = info.getInfo().getComponentName();
-            return new QuickAppsRecord(componentName, 0);
+            //todo  bug
+            return new QuickAppsRecord(componentName, info.getInfo().getUser().equals(Process.myUserHandle()) ? 0 : 999);
         }
 
         @Override
@@ -250,9 +280,9 @@ public class ProViewControler implements View.OnClickListener {
             return componentName.getPackageName() + "/" + componentName.getClassName() + ":" + userId;
         }
 
-        static String AppInfo2String(AppInfo info) {
+        public static String AppInfo2String(AppInfo info) {
             ComponentName componentName = info.getInfo().getComponentName();
-            return componentName.getPackageName() + "/" + componentName.getClassName() + ":0";
+            return componentName.getPackageName() + "/" + componentName.getClassName() + ":" + (info.getInfo().getUser().equals(Process.myUserHandle()) ? 0 : 999);
         }
     }
 
@@ -262,22 +292,26 @@ public class ProViewControler implements View.OnClickListener {
         int id = v.getId();
 
         if (id == R.id.moreAppsMenu) {
-            toggleMoreApps(!showMoreAppsFlag,true);
+            toggleMoreApps(!showMoreAppsFlag, true);
             return;
         }
 
         View replace = null;
         switch (id) {
             case R.id.tabNoti:
+                mTabNoti.toggleGameRedPoint(false);
                 if (mDetailState == DETAIL_STATE_TYPE_NOTI) {
                     return;
                 }
                 mDetailState = DETAIL_STATE_TYPE_NOTI;
                 replace = buildDetailView(mContext, DETAIL_VIEW_TYPE_NOTI);
-                NotificationListView notificationListView = (NotificationListView) replace;
-                notificationListView.updateNotifications(mCallBack.getNotifications());
+                NotificationListView notificationListView = (NotificationListView) replace.findViewById(R.id.noti_list);
+                List<StatusBarNotification> notifications = mCallBack.getNotifications();
+                notificationListView.updateNotifications(notifications);
+                replace.findViewById(R.id.no_noti_summary).setVisibility(notifications.size()>0?View.INVISIBLE:View.VISIBLE);
                 break;
             case R.id.tabGame:
+                mTabGame.toggleGameRedPoint(false);
                 if (mDetailState == DETAIL_STATE_TYPE_GAME) {
                     return;
                 }
@@ -322,9 +356,33 @@ public class ProViewControler implements View.OnClickListener {
 
     private boolean showMoreAppsFlag = false;
 
-    private void toggleMoreApps(boolean show,boolean needSummary) {
+
+    List<AppInfo> loadAllApps(List<QuickAppsRecord> filter) {
+        List<AppInfo> list = new ArrayList<>();
+        String currentPkg = mCallBack.getGamePkg();
+        UserHandle owner = Process.myUserHandle();
+        outer:
+        for (AppInfo app : mAppApps) {
+            LauncherActivityInfo info = app.getInfo();
+            if (TextUtils.equals(currentPkg, info.getComponentName().getPackageName())) {
+                continue outer;
+            }
+            for (int i = 0, n = filter.size(); i < n; i++) {
+                ProViewControler.QuickAppsRecord record = filter.get(i);
+                boolean isOwner = record.userId == 0;
+                if ((isOwner == info.getUser().equals(owner)) && record.componentName.equals(info.getComponentName())) {
+                    continue outer;
+                }
+            }
+            list.add(app);
+        }
+        return list;
+    }
+
+
+    private void toggleMoreApps(boolean show, boolean needSummary) {
         if (showMoreAppsFlag == show) {
-            if(show){
+            if (show) {
                 mMoreAppsFrame.setSummary(false);
             }
             return;
@@ -332,7 +390,10 @@ public class ProViewControler implements View.OnClickListener {
             showMoreAppsFlag = show;
         }
         if (show) {
-            List<AppInfo> appInfos = mCallBack.loadAllApps(quickAppsList);
+            while (!mAppsloadFinished.get()) {
+                Thread.yield();
+            }
+            List<AppInfo> appInfos = loadAllApps(quickAppsList);
             sortAllApps(appInfos);
             mMoreAppsFrame.init(appInfos, isLand ? 6 : 4);
             mMoreAppsFrame.setVisibility(View.VISIBLE);
@@ -348,7 +409,7 @@ public class ProViewControler implements View.OnClickListener {
         }
     }
 
-    void  sortAllApps(List<AppInfo> list){
+    void sortAllApps(List<AppInfo> list) {
         final Collator collator = Collator.getInstance(Locale.CHINESE);
         Collections.sort(list, new Comparator<AppInfo>() {
             @Override
@@ -396,29 +457,17 @@ public class ProViewControler implements View.OnClickListener {
     private void prepareShow() {
         mDetailState = -1;
 
-        if(mCallBack.getNotifications().size()!=0) {
+        if (mCallBack.getNotifications().size() != 0) {
             onClick(mTabNoti);//mDetailState = noti
-        }else{
-            onClick(mTabGame);//mDetailState = game
-        }
-
-        toggleMoreApps(false,false);
-
-        //绑定quick—apps，todo区分用户
-        List<AppInfo> list = new ArrayList<>();
-        quickAppsList = new ArrayList<>();
-        String saveString = mSharedPreferences.getString("quick_apps_list", null);
-        if (saveString == null) {
-            quickAppsList.add(new QuickAppsRecord(new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI"), 0));
-            quickAppsList.add(new QuickAppsRecord(new ComponentName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.SplashActivity"), 0));
+            mTabGame.toggleGameRedPoint(mCallBack.getWelfareNum()>0);
         } else {
-            String[] split = saveString.split(";");
-            for (String s : split) {
-                if (!TextUtils.isEmpty(s)) {
-                    quickAppsList.add(QuickAppsRecord.fromString(s));
-                }
-            }
+            onClick(mTabGame);//mDetailState = game
+            mTabNoti.toggleGameRedPoint(false);
         }
+
+        toggleMoreApps(false, false);
+
+        List<AppInfo> list = new ArrayList<>();
         for (QuickAppsRecord record : quickAppsList) {
             AppInfo test = mCallBack.loadApps(record.componentName.getPackageName(), record.componentName.getClassName(), record.userId);
             if (test != null) {

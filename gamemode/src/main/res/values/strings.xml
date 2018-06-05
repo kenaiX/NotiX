@@ -3,6 +3,7 @@
     <string name="noti">通知</string>
     <string name="game">福利</string>
     <string name="settings">设置</string>
-    <string name="summary">按住拖动调整顺序</string>
+    <string name="summary">长按可添加图标到上方的标签栏</string>
+    <string name="no_noti">没有通知</string>
 
 </resources>

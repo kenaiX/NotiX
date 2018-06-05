@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+
+    <dimen name="aod_battery_core_right">2.6dp</dimen>
+    <dimen name="aod_battery_core_left">4dp</dimen>
+    <dimen name="aod_battery_core_top">7.8dp</dimen>
+    <dimen name="aod_battery_core_bottom">7.8dp</dimen>
+
     <!-- game mode setting-->
     <dimen name="game_mode_proview_outline_radius">3.33dp</dimen>
     <dimen name="game_mode_proview_width">324dp</dimen>
@@ -10,7 +16,7 @@
     <dimen name="game_mode_proview_head_height">60dp</dimen>
     <dimen name="game_mode_proview_head_panda_size">35.33dp</dimen>
     <dimen name="game_mode_proview_tab_width">64dp</dimen>
-    <dimen name="game_mode_proview_apps_size">30dp</dimen>
+    <dimen name="game_mode_proview_apps_size">24dp</dimen>
     <dimen name="game_mode_proview_apps_quick_margin">20dp</dimen>
     <dimen name="game_mode_proview_apps_quick_margin_land">40dp</dimen>
     <!-- game mode setting-->

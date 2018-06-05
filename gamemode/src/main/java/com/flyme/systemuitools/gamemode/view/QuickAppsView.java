@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -28,8 +27,10 @@ public class QuickAppsView extends LinearLayout implements View.OnClickListener,
         super(context, attrs);
     }
 
-    ImageView[] quickItems = new ImageView[4];
-    AppInfo[] mApps = new AppInfo[4];
+    public static final int NUM_APPS = 3;
+
+    ImageView[] quickItems = new ImageView[3];
+    AppInfo[] mApps = new AppInfo[3];
     boolean isLand = false;
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -47,9 +48,8 @@ public class QuickAppsView extends LinearLayout implements View.OnClickListener,
         quickItems[0] = (ImageView) findViewById(R.id.quick1);
         quickItems[1] = (ImageView) findViewById(R.id.quick2);
         quickItems[2] = (ImageView) findViewById(R.id.quick3);
-        quickItems[3] = (ImageView) findViewById(R.id.quick4);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < NUM_APPS; i++) {
             quickItems[i].setId(i);
             quickItems[i].setOnClickListener(this);
             quickItems[i].setOnLongClickListener(this);
@@ -57,13 +57,13 @@ public class QuickAppsView extends LinearLayout implements View.OnClickListener,
 
         if(ProViewControler.sLand){
             int margin = getResources().getDimensionPixelSize(R.dimen.game_mode_proview_apps_quick_margin_land);
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < NUM_APPS; i++) {
                 LinearLayout.LayoutParams layoutParams = (LayoutParams) quickItems[i].getLayoutParams();
                 layoutParams.setMarginEnd(margin);
             }
         }else{
             int margin = getResources().getDimensionPixelSize(R.dimen.game_mode_proview_apps_quick_margin);
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < NUM_APPS; i++) {
                 LinearLayout.LayoutParams layoutParams = (LayoutParams) quickItems[i].getLayoutParams();
                 layoutParams.setMarginEnd(margin);
             }
@@ -71,14 +71,14 @@ public class QuickAppsView extends LinearLayout implements View.OnClickListener,
     }
 
     public void bindApps(List<AppInfo> list) {
-        for (int i = 0; i < 4 ; i++) {
+        for (int i = 0; i < NUM_APPS ; i++) {
             if(list.size() > i) {
                 mApps[i] = list.get(i);
             }else{
                 mApps[i] = null;
             }
         }
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < NUM_APPS; i++) {
             quickItems[i].setImageDrawable(null);
             if (mApps[i] != null) {
                 quickItems[i].setImageDrawable(mApps[i].getIcon());
@@ -124,14 +124,14 @@ public class QuickAppsView extends LinearLayout implements View.OnClickListener,
 
     @Override
     public boolean onAcceptedCompleted(MotionEvent event, AppInfo info) {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < NUM_APPS; i++) {
             ImageView child = quickItems[i];
             if (child.getTag() == null) {
                 AppInfo childInfo = new AppInfo(info);
                 child.setTag(childInfo);
                 mApps[i] = childInfo;
                 child.setImageDrawable(childInfo.getIcon());
-                RxBus.get().post(new ConfigChangeEvents.QuickAppsConfigChange(mApps));
+                RxBus.get().post(new ConfigChangeEvents.OnSaveQuickAppsConfig(mApps));
                 return true;
             }
         }
@@ -140,7 +140,32 @@ public class QuickAppsView extends LinearLayout implements View.OnClickListener,
 
     @Override
     public void onRemovedCompleted(View originView) {
-        RxBus.get().post(new ConfigChangeEvents.QuickAppsConfigChange(mApps));
+        AppInfo[] temp = new AppInfo[NUM_APPS];
+        int index = 0;
+        for (int i = 0; i < NUM_APPS; i++) {
+            ImageView child = quickItems[i];
+            if (child.getTag() != null) {
+                temp[index++] = (AppInfo) child.getTag();
+            }
+        }
+        for (int i = 0; i < NUM_APPS; i++) {
+            ImageView child = quickItems[i];
+            AppInfo tag = (AppInfo)child.getTag();
+            if(temp[i]!=null) {
+                if (tag != temp[i]) {
+                    AppInfo childInfo = new AppInfo(temp[i]);
+                    child.setTag(childInfo);
+                    mApps[i] = childInfo;
+                    child.setImageDrawable(childInfo.getIcon());
+                }
+            }else{
+                child.setTag(null);
+                mApps[i] = null;
+                child.setImageDrawable(null);
+            }
+        }
+
+        RxBus.get().post(new ConfigChangeEvents.OnSaveQuickAppsConfig(mApps));
     }
 
     @Override
@@ -157,7 +182,7 @@ public class QuickAppsView extends LinearLayout implements View.OnClickListener,
 
     @Subscribe
     public void onStartDrag(DragEvents.StartDrag event) {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < NUM_APPS; i++) {
             if (mApps[i] == null) {
                 quickItems[i].setImageResource(R.drawable.game_mode_apps_blank);
             }
@@ -166,7 +191,7 @@ public class QuickAppsView extends LinearLayout implements View.OnClickListener,
 
     @Subscribe
     public void onStopDrag(DragEvents.StopDragCompleted event) {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < NUM_APPS; i++) {
             if (mApps[i] == null) {
                 quickItems[i].setImageDrawable(null);
             }

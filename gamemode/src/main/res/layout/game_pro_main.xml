@@ -48,7 +48,7 @@
                         android:id="@+id/batteryLevel"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="4dp"
                         android:gravity="center"
                         android:textSize="14sp"
                         tools:text="test" />
@@ -73,7 +73,7 @@
             android:layout_height="@dimen/game_mode_proview_apps_size"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="22dp"
+            android:layout_marginEnd="16dp"
             android:src="@drawable/game_mode_more_apps_menu" />
 
         <com.flyme.systemuitools.gamemode.view.QuickAppsView
@@ -175,6 +175,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/moreapps_summary"
+            android:scrollbarSize="4dp"
+            android:scrollbarThumbVertical="@drawable/scroll_bar_bg"
+            android:overScrollMode="never"
             android:divider="@null" />
     </com.flyme.systemuitools.gamemode.view.MoreAppsView>
 

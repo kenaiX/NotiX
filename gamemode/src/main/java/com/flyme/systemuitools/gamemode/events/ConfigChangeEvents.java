@@ -5,13 +5,17 @@ import com.flyme.systemuitools.gamemode.model.AppInfo;
 import java.util.List;
 
 public class ConfigChangeEvents {
-    public static class QuickAppsConfigChange {
+    public static class OnSaveQuickAppsConfig {
         public AppInfo[] list;
 
-        public QuickAppsConfigChange(AppInfo[] list) {
+        public OnSaveQuickAppsConfig(AppInfo[] list) {
             this.list = list;
         }
     }
+
+    public static class OnQuickAppsConfigChanged {
+    }
+
     public static class PhoneConfigChange{
 
     }

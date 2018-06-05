@@ -1,6 +1,7 @@
 package com.flyme.systemuitools.gamemode.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -22,7 +23,6 @@ public class HeadView extends RelativeLayout implements Dragable {
     protected void onFinishInflate() {
         super.onFinishInflate();
         mQuickAppsView = (QuickAppsView) findViewById(R.id.quckAppsFrame);
-
     }
 
     @Override

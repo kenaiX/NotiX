@@ -37,7 +37,7 @@ public class GameModeActivity extends Activity {
 
     private ProViewControler.CallBack mCallback = new ProViewControler.CallBack() {
         @Override
-        public List<AppInfo> loadAllApps(List<ProViewControler.QuickAppsRecord> filter) {
+        public List<AppInfo> loadAllApps() {
             String currentPkg = getGamePkg();
             List<AppInfo> list = new ArrayList<>();
             final List<UserHandle> profiles = mUserManager.getUserProfiles();
@@ -48,13 +48,6 @@ public class GameModeActivity extends Activity {
                     for (LauncherActivityInfo info : activityList) {
                         if (TextUtils.equals(currentPkg, info.getComponentName().getPackageName())) {
                             continue outer;
-                        }
-                        for (int i = 0, n = filter.size(); i < n; i++) {
-                            ProViewControler.QuickAppsRecord record = filter.get(i);
-                            //todo user
-                            if (record.componentName.equals(info.getComponentName())) {
-                                continue outer;
-                            }
                         }
                         list.add(loadAppInfo(info));
                     }
@@ -113,6 +106,11 @@ public class GameModeActivity extends Activity {
         public void onShowChange(boolean isShow) {
 
         }
+
+        @Override
+        public int getWelfareNum() {
+            return 1;
+        }
     };
 
     @Override
@@ -139,9 +137,6 @@ public class GameModeActivity extends Activity {
 
         im.setBackgroundColor(Color.rgb(235, 235, 235));
     }
-
-
-
 
 
     private AppInfo loadAppInfo(LauncherActivityInfo info) {
