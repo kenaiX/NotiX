@@ -18,7 +18,7 @@ public class GameSdkUtil {
 
     static final String TAG = "GameSdkUtil";
 
-    public static void onApplicationAttach(Application context){
+    public static void onApplicationAttach(Application context) {
         try {
             MzPluginPlatform.attachBaseContext(context, new MzPluginEventCallback(context) {
                 @Override
@@ -42,7 +42,7 @@ public class GameSdkUtil {
         }
     }
 
-    public static void onApplicationCreate(){
+    public static void onApplicationCreate() {
         try {
             MzPluginPlatform.onCreate();
         } catch (Throwable e) {
@@ -50,7 +50,7 @@ public class GameSdkUtil {
         }
     }
 
-    public static void onApplicationLowMemory(){
+    public static void onApplicationLowMemory() {
         try {
             MzPluginPlatform.onLowMemory();
         } catch (Throwable e) {
@@ -58,7 +58,7 @@ public class GameSdkUtil {
         }
     }
 
-    public static void onApplicationTrimMemory(int level){
+    public static void onApplicationTrimMemory(int level) {
         try {
             MzPluginPlatform.onTrimMemory(level);
         } catch (Throwable e) {
@@ -66,7 +66,7 @@ public class GameSdkUtil {
         }
     }
 
-    public static void onApplicationConfigurationChanged(Configuration config){
+    public static void onApplicationConfigurationChanged(Configuration config) {
         try {
             MzPluginPlatform.onConfigurationChanged(config);
         } catch (Throwable e) {
@@ -92,7 +92,7 @@ public class GameSdkUtil {
         try {
             Bundle bundle = new Bundle();
             bundle.putString("packageName", pkg); //当前游戏包名,需要游戏助手传过来
-            View view = MzPluginPlatform.getGameAssistantView(parent.getContext().getApplicationContext(), subView, bundle);
+            View view = MzPluginPlatform.getGameAssistantView(parent.getContext().getApplicationContext(), bundle);
             if (view != null) {
                 //游戏助手把福利的view add 到相应窗口
                 parent.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

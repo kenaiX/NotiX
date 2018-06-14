@@ -231,19 +231,15 @@ public class ProViewControler implements View.OnClickListener {
                     WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
             layoutParams.setTitle("GameMode");
 
-            Resources resources = mContext.getResources();
-            if (!isLand) {
-                layoutParams.width = resources.getDimensionPixelSize(R.dimen.game_mode_proview_width);
-                layoutParams.height = resources.getDimensionPixelSize(R.dimen.game_mode_proview_height);
-            } else {
-                layoutParams.width = resources.getDimensionPixelSize(R.dimen.game_mode_proview_width_land);
-                layoutParams.height = resources.getDimensionPixelSize(R.dimen.game_mode_proview_height_land);
-            }
+            DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+            layoutParams.width = metrics.widthPixels;
+            layoutParams.height = metrics.heightPixels;
 
             layoutParams.format = PixelFormat.RGBA_8888;
             layoutParams.gravity = Gravity.CENTER;
             layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
-                    | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+                    | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+                    | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
             //layoutParams.meizuParams.flags |= MeizuLayoutParams.MEIZU_FLAG_DISABLE_HIDING_ON_FULL_SCREEN;
 
             WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);

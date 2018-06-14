@@ -23,6 +23,7 @@ import android.widget.ImageView;
 
 import com.flyme.systemuitools.SystemUIToolsNotificationListenerService;
 import com.flyme.systemuitools.gamemode.model.AppInfo;
+import com.flyme.systemuitools.gamemode.utils.FloatWindowWhiteListHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,9 @@ public class GameModeActivity extends Activity {
                     List<LauncherActivityInfo> activityList = mLauncherApps.getActivityList(null, user);
                     outer:
                     for (LauncherActivityInfo info : activityList) {
-                        if (TextUtils.equals(currentPkg, info.getComponentName().getPackageName())) {
+                        String packageName = info.getComponentName().getPackageName();
+                        if (TextUtils.equals(currentPkg, packageName)
+                                || !FloatWindowWhiteListHelper.inWhiteList(packageName)) {
                             continue outer;
                         }
                         list.add(loadAppInfo(info));

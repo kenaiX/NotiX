@@ -29,7 +29,6 @@ public class GameDetailView extends FrameLayout {
             GameSdkUtil.showGameView(this, mSubView, pkg);
         } else {  //没有安装则需要调用安装,等待收到 onInstallPluginSucceed （Application） 事件后，重新加载福利的界面
             GameSdkUtil.preparePluginIfneed(getContext());
-            Toast.makeText(getContext(), "插件没有安装", Toast.LENGTH_SHORT).show();
         }
     }
 

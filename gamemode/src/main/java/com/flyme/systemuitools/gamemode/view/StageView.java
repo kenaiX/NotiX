@@ -103,6 +103,10 @@ public class StageView extends RelativeLayout {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 
+        if (ev.getActionIndex() != 0) {
+            return true;
+        }
+
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             float x = ev.getX();
             float y = ev.getY();
@@ -110,6 +114,9 @@ public class StageView extends RelativeLayout {
                 RxBus.get().post(new UIEvents.CloseProView());
                 return true;
             }
+        } else if (ev.getAction() == MotionEvent.ACTION_OUTSIDE) {
+            RxBus.get().post(new UIEvents.CloseProView());
+            return true;
         }
 
         return super.dispatchTouchEvent(ev);
