@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">GameMode</string>
-    <string name="noti">通知</string>
-    <string name="game">福利</string>
-    <string name="settings">设置</string>
-    <string name="summary">长按可添加图标到上方的标签栏</string>
-    <string name="no_noti">没有通知</string>
-
+    <string name="game_mode_pro_noti">Notifications</string>
+    <string name="game_mode_pro_game">福利</string>
+    <string name="game_mode_pro_settings">Settings</string>
+    <string name="game_mode_pro_summary">长按可添加图标到上方的标签栏</string>
+    <string name="game_mode_pro_no_noti">No notifications</string>
+    <string name="game_mode_pro_time_remaining">预计可玩</string>
 </resources>

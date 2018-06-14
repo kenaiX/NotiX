@@ -11,26 +11,26 @@ import com.flyme.systemuitools.R;
 
 public class AppItemView extends RelativeLayout {
 
+    public ImageView mIconView;
+    TextView mTitleView;
+
     public AppItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    TextView titleView;
-    public ImageView iconView;
-
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        titleView = (TextView) findViewById(R.id.title);
-        iconView = (ImageView) findViewById(R.id.icon);
+        mTitleView = (TextView) findViewById(R.id.title);
+        mIconView = (ImageView) findViewById(R.id.icon);
     }
 
     void bindIcon(Drawable d) {
-        iconView.setImageDrawable(d);
+        mIconView.setImageDrawable(d);
     }
 
     void bindTitle(CharSequence s) {
-        titleView.setText(s);
+        mTitleView.setText(s);
     }
 
 

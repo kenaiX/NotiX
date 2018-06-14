@@ -15,8 +15,13 @@
     <dimen name="game_mode_proview_height_land">303dp</dimen>
     <dimen name="game_mode_proview_head_height">60dp</dimen>
     <dimen name="game_mode_proview_head_panda_size">35.33dp</dimen>
+    <dimen name="game_mode_proview_tab_height">45.33dp</dimen>
     <dimen name="game_mode_proview_tab_width">64dp</dimen>
     <dimen name="game_mode_proview_apps_size">24dp</dimen>
+    <dimen name="game_mode_proview_quick_apps_width">44dp</dimen>
+    <dimen name="game_mode_proview_quick_apps_width_land">64dp</dimen>
+    <dimen name="game_mode_proview_apps_padding">10dp</dimen>
+    <dimen name="game_mode_proview_apps_padding_land">20dp</dimen>
     <dimen name="game_mode_proview_apps_quick_margin">20dp</dimen>
     <dimen name="game_mode_proview_apps_quick_margin_land">40dp</dimen>
     <!-- game mode setting-->

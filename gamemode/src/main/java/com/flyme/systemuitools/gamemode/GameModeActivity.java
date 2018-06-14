@@ -18,7 +18,6 @@ import android.os.UserManager;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.ArrayMap;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -28,6 +27,9 @@ import com.flyme.systemuitools.gamemode.model.AppInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * For test
+ */
 public class GameModeActivity extends Activity {
     ProViewControler proViewControler;
 
@@ -90,7 +92,7 @@ public class GameModeActivity extends Activity {
 
         @Override
         public String getGamePkg() {
-            ActivityManager am = (ActivityManager)getSystemService(Activity.ACTIVITY_SERVICE);
+            ActivityManager am = (ActivityManager) getSystemService(Activity.ACTIVITY_SERVICE);
             try {
                 List<ActivityManager.RecentTaskInfo> taskInfos = am.getRecentTasks(1, 0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -111,6 +113,11 @@ public class GameModeActivity extends Activity {
         public int getWelfareNum() {
             return 1;
         }
+
+        @Override
+        public String computeBatteryTimeRemaining() {
+            return "3分钟";
+        }
     };
 
     @Override
@@ -122,7 +129,6 @@ public class GameModeActivity extends Activity {
 
 
         proViewControler = new ProViewControler(this, mCallback);
-        proViewControler.onStart();
         proViewControler.toggleProViewShow(true);
 
 
@@ -148,7 +154,7 @@ public class GameModeActivity extends Activity {
             if (appInfo != null) {
                 d = appInfo.loadIcon(mPkgManager);
             }
-            return new AppInfo(d, info.getLabel(), info, 0);
+            return new AppInfo(d, info.getLabel(), info);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -160,6 +166,5 @@ public class GameModeActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         proViewControler.toggleProViewShow(false);
-        proViewControler.onStop();
     }
 }

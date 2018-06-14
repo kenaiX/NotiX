@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.flyme.systemuitools.gamemode.view.RedPointFrameLayout
+<com.flyme.systemuitools.gamemode.view.RedPointFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tabGame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1">
@@ -11,16 +9,17 @@
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center"
-        tools:text="@string/game" />
+        tools:text="@string/game_mode_pro_game" />
 
     <TextView
         android:id="@+id/redpoint"
-        android:layout_centerInParent="true"
-        android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="6sp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/game_oval"
         android:fontFamily="sans-serif-medium"
-        android:background="@drawable/game_oval"/>
+        android:gravity="center"
+        android:textSize="6sp" />
 </com.flyme.systemuitools.gamemode.view.RedPointFrameLayout>

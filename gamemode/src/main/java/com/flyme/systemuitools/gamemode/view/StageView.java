@@ -5,12 +5,10 @@ import android.content.res.Configuration;
 import android.graphics.Outline;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewOutlineProvider;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.flyme.systemuitools.R;
@@ -22,6 +20,9 @@ import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 
 public class StageView extends RelativeLayout {
+    float mLastX, mLastY;
+    private int mWidth, mHeight;
+
     public StageView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -57,21 +58,17 @@ public class StageView extends RelativeLayout {
         DragHelper.getInstance().startDrag(event.dragView, event.dragInfo, event.parent, mLastX, mLastY);
     }
 
-    float mLastX, mLastY;
-
     @Override
     protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
         super.onVisibilityChanged(changedView, visibility);
-        if(visibility ==VISIBLE){
+        if (visibility == VISIBLE) {
             DragHelper.getInstance().reset();
         }
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.e("@@@@", "onInterceptTouchEvent " + ev.getAction());
         if (DragHelper.getInstance().idDraging()) {
-            Log.e("@@@@", "enter drag");
             DragHelper.getInstance().onTouchEvent(ev);
             return true;
         }
@@ -82,8 +79,6 @@ public class StageView extends RelativeLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        Log.e("@@@@", "onTouchEvent " + ev.getAction());
-
         if (DragHelper.getInstance().idDraging()) {
             return DragHelper.getInstance().onTouchEvent(ev);
         }
@@ -97,8 +92,6 @@ public class StageView extends RelativeLayout {
         super.onConfigurationChanged(newConfig);
         RxBus.get().post(new ConfigChangeEvents.PhoneConfigChange());
     }
-
-    private int mWidth, mHeight;
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {

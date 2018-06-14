@@ -1,7 +1,6 @@
 package com.flyme.systemuitools.gamemode.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -13,16 +12,16 @@ import com.flyme.systemuitools.gamemode.model.AppInfo;
 import com.flyme.systemuitools.gamemode.utils.Dragable;
 
 public class HeadView extends RelativeLayout implements Dragable {
+    QuickAppsView mQuickAppsView;
+
     public HeadView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    QuickAppsView mQuickAppsView;
-
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mQuickAppsView = (QuickAppsView) findViewById(R.id.quckAppsFrame);
+        mQuickAppsView = (QuickAppsView) findViewById(R.id.gamemode_quick_apps_frame);
     }
 
     @Override
@@ -38,5 +37,20 @@ public class HeadView extends RelativeLayout implements Dragable {
     @Override
     public void onRemovedCompleted(View originView) {
         mQuickAppsView.onRemovedCompleted(originView);
+    }
+
+    @Override
+    public void onDragOver(MotionEvent event) {
+        mQuickAppsView.onDragOver(event);
+    }
+
+    @Override
+    public void onDragEnter() {
+        mQuickAppsView.onDragEnter();
+    }
+
+    @Override
+    public void onDragExit() {
+        mQuickAppsView.onDragExit();
     }
 }

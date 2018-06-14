@@ -11,6 +11,9 @@ import android.widget.TextView;
 import com.flyme.systemuitools.R;
 
 public class RedPointFrameLayout extends FrameLayout {
+    TextView mText;
+    View mRedPoint;
+
     public RedPointFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
@@ -19,17 +22,14 @@ public class RedPointFrameLayout extends FrameLayout {
         mRedPoint.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
-    public void setTitle(String s){
+    public void setTitle(String s) {
         mText.setText(s);
     }
-
-    TextView mText;
-    View mRedPoint;
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mText = (TextView)findViewById(R.id.text);
+        mText = (TextView) findViewById(R.id.text);
         mRedPoint = findViewById(R.id.redpoint);
     }
 

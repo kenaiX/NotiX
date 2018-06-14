@@ -1,13 +1,10 @@
 package com.flyme.systemuitools.gamemode.view;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.os.BatteryManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,6 +18,7 @@ public class BatteryView extends RelativeLayout {
     private TextView mBatteryLevel;
     private TextView mBaterrySummary;
     private BatteryObserver mBatteryObserver;
+    private Callback mCallback;
 
     public BatteryView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -32,6 +30,10 @@ public class BatteryView extends RelativeLayout {
 
     public BatteryView(Context context) {
         super(context);
+    }
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
     }
 
     @Override
@@ -46,23 +48,35 @@ public class BatteryView extends RelativeLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mBatteryIcon = (AODBatteryView) findViewById(R.id.batteryIcon);
-        mBatteryLevel = (TextView) findViewById(R.id.batteryLevel);
-        mBaterrySummary = (TextView) findViewById(R.id.baterrySummary);
+        mBatteryIcon = (AODBatteryView) findViewById(R.id.gamemode_battery_icon);
+        mBatteryLevel = (TextView) findViewById(R.id.gamemode_battery_level);
+        mBaterrySummary = (TextView) findViewById(R.id.gamemode_baterry_summary);
 
         mBatteryObserver = new BatteryObserver() {
             @Override
-            public void onBatteryChange(BatteryStatus status,int level, String time, boolean isCharging) {
+            public void onBatteryChange(BatteryStatus status, int level, String time, boolean isCharging) {
                 mBatteryLevel.setText(level + "%");
+
+                String timeRemaining = null;
                 if (level < 10) {
-                    mBaterrySummary.setText(time);
+                    if (mCallback != null) {
+                        timeRemaining = mCallback.computeBatteryTimeRemaining();
+                    }
+                }
+                if (timeRemaining != null) {
+                    mBaterrySummary.setText(getResources().getString(R.string.game_mode_pro_time_remaining) + timeRemaining);
                     mBaterrySummary.setVisibility(VISIBLE);
                 } else {
-                    mBaterrySummary.setText(null);
                     mBaterrySummary.setVisibility(GONE);
                 }
+
+
                 mBatteryIcon.updateBatteryInfo(status);
             }
         };
+    }
+
+    public interface Callback {
+        String computeBatteryTimeRemaining();
     }
 }

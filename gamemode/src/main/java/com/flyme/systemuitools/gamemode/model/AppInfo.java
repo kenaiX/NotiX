@@ -2,16 +2,13 @@ package com.flyme.systemuitools.gamemode.model;
 
 import android.content.pm.LauncherActivityInfo;
 import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 public class AppInfo {
     Drawable mIcon;
     CharSequence mLabel;
     LauncherActivityInfo mInfo;
-    public ImageView targeView;
 
-    public AppInfo(Drawable icon, CharSequence label, LauncherActivityInfo info, int index) {
+    public AppInfo(Drawable icon, CharSequence label, LauncherActivityInfo info) {
         mIcon = icon;
         mLabel = label;
         mInfo = info;
