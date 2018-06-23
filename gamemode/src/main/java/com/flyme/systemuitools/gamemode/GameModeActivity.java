@@ -108,7 +108,7 @@ public class GameModeActivity extends Activity {
         }
 
         @Override
-        public void onShowChange(boolean isShow) {
+        public void onShowChange(boolean isShow, boolean showPanadaImmediately) {
 
         }
 

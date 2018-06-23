@@ -1,7 +1,11 @@
 package com.flyme.systemuitools.gamemode.utils;
 
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +17,8 @@ import com.hwangjr.rxbus.RxBus;
 import com.meizu.gamecenter.MzPluginPlatform;
 import com.meizu.gamecenter.config.MzPluginEventCallback;
 import com.qihoo360.replugin.model.PluginInfo;
+
+import java.lang.reflect.Method;
 
 public class GameSdkUtil {
 
@@ -92,7 +98,7 @@ public class GameSdkUtil {
         try {
             Bundle bundle = new Bundle();
             bundle.putString("packageName", pkg); //当前游戏包名,需要游戏助手传过来
-            View view = MzPluginPlatform.getGameAssistantView(parent.getContext().getApplicationContext(), bundle);
+            View view = MzPluginPlatform.getGameAssistantView(parent.getContext().getApplicationContext(), subView, bundle);
             if (view != null) {
                 //游戏助手把福利的view add 到相应窗口
                 parent.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -100,5 +106,49 @@ public class GameSdkUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static final String GAME_SDK_PACKAGENAME = "com.meizu.gamecenter.service";
+
+    /**
+     * 本地是否安装了游戏框架
+     */
+    public static final boolean isInstalled(Context context) {
+        try {
+            PackageManager pm = context.getPackageManager();
+            ApplicationInfo info = pm.getApplicationInfo(GAME_SDK_PACKAGENAME, 0);
+            if (info != null) {
+                return true;
+            }
+        } catch (Exception e) {
+            // not found
+            Log.w(TAG, e.getMessage() + " not Found");
+        }
+        return false;
+    }
+
+
+    /**
+     * 从系统恢复游戏中心
+     */
+    public static boolean restoreGameSDK(Context context){
+        try {
+            Intent intent = new Intent();
+            intent.setPackage(GAME_SDK_PACKAGENAME);
+            intent.setComponent(new ComponentName(
+                    GAME_SDK_PACKAGENAME,
+                    "com.meizu.gamecenter.service.NoExitsActivity"));
+            try {
+                Method setForceMode = intent.getClass().getMethod("setForceMode", Boolean.TYPE);
+                setForceMode.invoke(intent,true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            context.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

@@ -9,6 +9,7 @@ import android.content.pm.LauncherActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Process;
 import android.os.UserHandle;
@@ -18,7 +19,6 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -34,6 +34,7 @@ import com.flyme.systemuitools.gamemode.events.UIEvents;
 import com.flyme.systemuitools.gamemode.model.AppInfo;
 import com.flyme.systemuitools.gamemode.utils.QuickAppsHelper;
 import com.flyme.systemuitools.gamemode.view.BatteryView;
+import com.flyme.systemuitools.gamemode.view.FullView;
 import com.flyme.systemuitools.gamemode.view.GameDetailView;
 import com.flyme.systemuitools.gamemode.view.QuickAppsView;
 import com.flyme.systemuitools.gamemode.view.RedPointFrameLayout;
@@ -74,7 +75,7 @@ public class ProViewControler implements View.OnClickListener {
     private final TextView mTabSettings;
     private final FrameLayout mDetailFrame;
     private final QuickAppsView mQuckAppsFrame;
-    private final ViewGroup mFullView;
+    private final FullView mFullView;
     //控制变量
     private boolean mAppsloadFinished = false;
     private int mDetailState = -1;//标注当前显示状态
@@ -95,7 +96,7 @@ public class ProViewControler implements View.OnClickListener {
 
         String getGamePkg();
 
-        void onShowChange(boolean isShow);
+        void onShowChange(boolean isShow, boolean showPanadaImmediately);
 
         int getWelfareNum();
 
@@ -149,7 +150,7 @@ public class ProViewControler implements View.OnClickListener {
         mTabNoti = (RedPointFrameLayout) mProView.findViewById(R.id.gamemode_tab_noti);
         mTabGame = (RedPointFrameLayout) mProView.findViewById(R.id.gamemode_tab_game);
         mTabSettings = (TextView) mProView.findViewById(R.id.gamemode_tab_settings);
-        mFullView = (ViewGroup) mProView.findViewById(R.id.gamemode_full);
+        mFullView = (FullView) mProView.findViewById(R.id.gamemode_full);
 
         //用来放置详情页
         mDetailFrame = (FrameLayout) mProView.findViewById(R.id.gamemode_detail_frame);
@@ -171,6 +172,25 @@ public class ProViewControler implements View.OnClickListener {
             @Override
             public String computeBatteryTimeRemaining() {
                 return mCallBack.computeBatteryTimeRemaining();
+            }
+        });
+
+        mFullView.setVisibilityChangedCallback(new FullView.Callback() {
+            @Override
+            public void onVisibilityChanged(boolean show) {
+                if (mProView.isShown()) {
+                    if (show) {
+                        WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) mProView.getLayoutParams();
+                        layoutParams.flags = buildWindowFlag(true);
+                        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+                        wm.updateViewLayout(mProView, layoutParams);
+                    } else {
+                        WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) mProView.getLayoutParams();
+                        layoutParams.flags = buildWindowFlag(false);
+                        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+                        wm.updateViewLayout(mProView, layoutParams);
+                    }
+                }
             }
         });
 
@@ -218,6 +238,10 @@ public class ProViewControler implements View.OnClickListener {
     }
 
     public void toggleProViewShow(boolean show) {
+        toggleProViewShow(show, true);
+    }
+
+    public void toggleProViewShow(boolean show, boolean showPanadaImmediately) {
         if (show == isShow) {
             return;
         }
@@ -226,9 +250,19 @@ public class ProViewControler implements View.OnClickListener {
             RxBus.get().register(this);
 
             prepareShow();
-
-            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            WindowManager.LayoutParams layoutParams;
+            if (mContext.getPackageName().equals("com.flyme.systemuitools")) {
+                layoutParams = new WindowManager.LayoutParams(
+                        WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            } else {
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
+                    layoutParams = new WindowManager.LayoutParams(
+                            WindowManager.LayoutParams.FIRST_SYSTEM_WINDOW + 38);
+                } else {
+                    layoutParams = new WindowManager.LayoutParams(
+                            WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                }
+            }
             layoutParams.setTitle("GameMode");
 
             DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
@@ -237,15 +271,13 @@ public class ProViewControler implements View.OnClickListener {
 
             layoutParams.format = PixelFormat.RGBA_8888;
             layoutParams.gravity = Gravity.CENTER;
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
-                    | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                    | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            layoutParams.flags = buildWindowFlag(false);
             //layoutParams.meizuParams.flags |= MeizuLayoutParams.MEIZU_FLAG_DISABLE_HIDING_ON_FULL_SCREEN;
 
             WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
             wm.addView(mProView, layoutParams);
 
-            mCallBack.onShowChange(true);
+            mCallBack.onShowChange(true, showPanadaImmediately);
 
         } else {
             RxBus.get().unregister(this);
@@ -253,7 +285,7 @@ public class ProViewControler implements View.OnClickListener {
             WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
             wm.removeViewImmediate(mProView);
 
-            mCallBack.onShowChange(false);
+            mCallBack.onShowChange(false, showPanadaImmediately);
         }
     }
 
@@ -271,7 +303,7 @@ public class ProViewControler implements View.OnClickListener {
 
     @Subscribe
     public void onStartApp(ClickEvents.OnAppsClick event) {
-        toggleProViewShow(false);
+        toggleProViewShow(false, false);
         mCallBack.startApps(event.info);
     }
 
@@ -472,5 +504,16 @@ public class ProViewControler implements View.OnClickListener {
             }
         }
         mQuckAppsFrame.bindApps(list);
+    }
+
+    private int buildWindowFlag(boolean focusable) {
+        int flag = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
+                | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+        if (focusable) {
+            return flag;
+        } else {
+            return flag | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        }
     }
 }

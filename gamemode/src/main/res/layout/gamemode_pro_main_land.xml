@@ -206,7 +206,7 @@
             android:layout_width="@dimen/game_mode_proview_apps_size"
             android:layout_height="@dimen/game_mode_proview_apps_size" />
 
-        <FrameLayout
+        <com.flyme.systemuitools.gamemode.view.FullView
             android:id="@+id/gamemode_full"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

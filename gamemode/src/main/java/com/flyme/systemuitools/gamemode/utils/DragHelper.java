@@ -101,12 +101,15 @@ public class DragHelper {
                 animateDragView(rect, new Runnable() {
                     @Override
                     public void run() {
-                        mDragView.setVisibility(View.INVISIBLE);
-                        firedView.onAcceptedCompleted(event, mOriginInfo);
-                        if (firedView != mOriginParent) {
-                            mOriginParent.onRemovedCompleted(mOriginView);
+                        //当mDragView不显示的时候意味着用户已经关闭了此窗口
+                        if (mDragView.isShown()) {
+                            mDragView.setVisibility(View.INVISIBLE);
+                            firedView.onAcceptedCompleted(event, mOriginInfo);
+                            if (firedView != mOriginParent) {
+                                mOriginParent.onRemovedCompleted(mOriginView);
+                            }
+                            RxBus.get().post(new DragEvents.StopDragCompleted());
                         }
-                        RxBus.get().post(new DragEvents.StopDragCompleted());
                     }
                 });
             } else {
