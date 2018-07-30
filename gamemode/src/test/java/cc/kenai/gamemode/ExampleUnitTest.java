@@ -14,16 +14,12 @@ public class ExampleUnitTest {
 
     String mWhiteList = " com.tencent.mm\n" +
             " com.tencent.mobileqq\n" +
-            " com.meizu.media.gallery\n" +
-            " com.meizu.media.camera\n" +
-            " com.android.browser\n" +
             " com.smile.gifmaker\n" +
             " com.eg.android.AlipayGphone\n" +
-            " com.android.settings\n" +
             " com.taobao.taobao\n" +
             " com.ss.android.article.news\n" +
+            "com.sina.weibo\n" +
             " com.tencent.qqlive\n" +
-            " com.meizu.flyme.calculator\n" +
             " com.UCMobile\n" +
             " com.baidu.searchbox\n" +
             " com.ss.android.ugc.aweme\n" +
@@ -34,16 +30,13 @@ public class ExampleUnitTest {
             " com.google.android.youtube\n" +
             " com.tencent.karaoke\n" +
             " com.tencent.qqmusic\n" +
-            " com.sina.weibo\n" +
             " com.meizu.media.video\n" +
             " com.android.chrome\n" +
             " com.meizu.mstore\n" +
             " com.xunmeng.pinduoduo\n" +
             " com.meizu.media.music\n" +
-            " com.netease.cloudmusic\n" +
             " com.ss.android.article.video\n" +
             " tv.danmaku.bili\n" +
-            " com.meizu.notepaper\n" +
             " com.youku.phone\n" +
             " com.ss.android.ugc.live\n" +
             " com.meizu.media.reader\n" +
@@ -81,7 +74,6 @@ public class ExampleUnitTest {
             " com.tencent.reading\n" +
             " com.android.email\n" +
             " cn.wps.moffice_eng\n" +
-            " com.meizu.flyme.wallet\n" +
             " cn.kuwo.player\n" +
             " com.sinovatech.unicom.ui\n" +
             " cn.xiaochuankeji.tieba\n" +
@@ -100,12 +92,10 @@ public class ExampleUnitTest {
             " com.tencent.gamehelper.smoba\n" +
             " cn.soulapp.android\n" +
             " com.tencent.qqsports\n" +
-            " com.icbc\n" +
             " com.wuba.zhuanzhuan\n" +
             " com.mxtech.videoplayer.ad\n" +
             " sogou.mobile.explorer\n" +
             " com.soft.blued\n" +
-            " com.chinamworld.main\n" +
             " com.songheng.eastnews\n" +
             " com.ss.android.article.interesting\n" +
             " com.qzone\n" +
@@ -145,7 +135,6 @@ public class ExampleUnitTest {
             " com.cubic.autohome\n" +
             " com.greenpoint.android.mc10086.activity\n" +
             " com.lightsky.video\n" +
-            " com.android.bankabc\n" +
             " com.tencent.qqlite\n" +
             " fm.xiami.main\n" +
             " bubei.tingshu\n" +
@@ -159,7 +148,6 @@ public class ExampleUnitTest {
             " com.quark.browser\n" +
             " com.qihoo.haosou.subscribe.vertical.book\n" +
             " so.ofo.labofo\n" +
-            " cmb.pb\n" +
             " com.ct.client\n" +
             " com.mobike.mobikeapp\n" +
             " com.cmcc.cmvideo\n" +
@@ -167,7 +155,6 @@ public class ExampleUnitTest {
             " com.esbook.reader\n" +
             " com.chaoxing.mobile\n" +
             " com.pplive.androidphone\n" +
-            " com.icbc.im\n" +
             " cc.quanben.novel\n" +
             " com.lianzainovel\n" +
             " com.videogo\n" +
@@ -190,7 +177,6 @@ public class ExampleUnitTest {
             " com.android.dazhihui\n" +
             " com.alibaba.wireless\n" +
             " com.xwtec.sd.mobileclient\n" +
-            " com.yitong.mbank.psbc\n" +
             " com.sohu.infonews\n" +
             " com.xingin.xhs\n" +
             " com.dongqiudi.news\n" +
@@ -198,7 +184,6 @@ public class ExampleUnitTest {
             " com.jingyao.easybike\n" +
             " com.jiongji.andriod.card\n" +
             " com.sogou.novel\n" +
-            " com.chinamworld.bocmbci\n" +
             " com.ifeng.news2\n" +
             " com.zenmen.palmchat\n" +
             " com.wbxm.icartoon\n" +
@@ -231,7 +216,8 @@ public class ExampleUnitTest {
             " com.wifi.reader\n" +
             " com.douban.frodo\n" +
             " com.dewmobile.kuaiya\n" +
-            " com.sohu.sohuvideo\n";
+            " com.sohu.sohuvideo\n" +
+            "com.alibaba.mobileim\n";
 
 
     @Test

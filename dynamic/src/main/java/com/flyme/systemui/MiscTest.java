@@ -8,6 +8,9 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -21,12 +24,22 @@ import java.util.List;
 public class MiscTest extends Activity {
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY|View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
 
         final TextView tx = new TextView(this);
         tx.setText("test");
+
+
+        getWindow().getDecorView().setBackgroundColor(Color.rgb(230,230,230));
 
         setContentView(tx);
 
@@ -54,6 +67,8 @@ public class MiscTest extends Activity {
         };
         animator.addListener(listenerAdapter);
         animator.start();
+
+
 
     }
 }

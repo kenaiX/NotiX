@@ -8,9 +8,11 @@ import android.content.ServiceConnection
 import android.graphics.*
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import com.meizu.flyme.launcher.IExternalCallback
 import com.meizu.flyme.launcher.IExternalService
 
 class LauncherScreenshotTest : Activity() {
@@ -47,6 +49,12 @@ class LauncherScreenshotTest : Activity() {
         sendBroadcast(it)
     }
 
+    var mCallback =  object :IExternalCallback.Stub(){
+        override fun onLauncherResume() {
+            Log.e("@@@@","resume")
+        }
+    };
+
     fun lock(islock: Boolean) {
         val it = Intent()
         it.component = ComponentName("com.meizu.flyme.launcher", "com.meizu.flyme.launcher.ExternalService")
@@ -78,8 +86,10 @@ class LauncherScreenshotTest : Activity() {
 
 
                 //测试桌面缩放
-                asInterface.snapHome()
+                asInterface.snapHome(true)
                 asInterface.scaleHome(0.5f)
+
+                asInterface.setExternalCallback(mCallback)
 
                 unbindService(this)
             }

@@ -19,16 +19,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<activity android:name=".MainActivity">
+
+        <!--
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".AppUsageStatsService"/>-->
+        <service android:name=".AppUsageStatsService"/>
+        -->
 
-        <!--<activity android:name=".LandActivity"
+
+        <!--
+        <activity android:name=".LandActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,11 +41,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".LandTestService"/>-->
+        <service android:name=".LandTestService"/>
+        -->
 
 
-        <!--图标占位-->
-        <!--<activity android:name=".multi.MultiActivity"
+        <!-- 图标占位 -->
+        <!--
+        <activity android:name=".multi.MultiActivity"
             android:label="Sest1"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -119,18 +126,23 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
+        -->
 
-        <!--<activity android:name=".NotificationTest"
+
+        <!--
+        <activity android:name=".NotificationTest"
             android:label="NotificationTest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
+        -->
 
 
-        <!--<service
+        <!--
+        <service
             android:name=".wechatreply.AutoReplyService"
             android:enabled="true"
             android:exported="true"
@@ -144,17 +156,23 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_config"/>
 
-        </service>-->
+        </service>
+        -->
 
-        <!--<activity android:name=".uimode.UIModeTestActivity"
+
+        <!--
+        <activity android:name=".uimode.UIModeTestActivity"
             android:label="UIModeTest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
+        -->
 
-        <!-- <activity
+
+        <!--
+         <activity
              android:name=".vectoranim.VectorAnimTestActivity"
              android:label="VectorAnimTestActivity">
              <intent-filter>
@@ -171,9 +189,12 @@
                  <action android:name="android.intent.action.MAIN" />
                  <category android:name="android.intent.category.LAUNCHER" />
              </intent-filter>
-         </activity>-->
+         </activity>
+        -->
 
-        <!--<activity
+
+        <!--
+        <activity
             android:name=".launcher.LauncherAnimationTest"
             android:label="LauncherAnimation"
             android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar">
@@ -181,17 +202,23 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
+        -->
 
-        <!--<activity android:name=".drivemode.DriveModeTest"
+
+        <!--
+        <activity android:name=".drivemode.DriveModeTest"
             android:label="DriveModeTest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
+        -->
 
-        <!-- <activity android:name="cc.kenai.projectX.dynamicload.DynamicLoadTest"
+
+        <!--
+         <activity android:name="cc.kenai.projectX.dynamicload.DynamicLoadTest"
              android:label="DynamicLoadTest">
              <intent-filter>
                  <action android:name="android.intent.action.MAIN" />
@@ -207,18 +234,20 @@
                  <action android:name="android.intent.action.MAIN" />
                  <category android:name="android.intent.category.LAUNCHER" />
              </intent-filter>
-         </activity>-->
+         </activity>
+        -->
 
 
-        <!--<activity
+        <!--
+        <activity
             android:name=".rxjava.RxjavaTest"
             android:label="RxjavaTest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
-
+        </activity>
+        -->
 
         <activity
             android:name=".launcher.LauncherScreenshotTest"
@@ -226,11 +255,13 @@
             android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!--<activity android:name=".multi.MultiActivity"
+        <!--
+        <activity android:name=".multi.MultiActivity"
             android:label="Sest1"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -245,13 +276,19 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
+        -->
 
-        <!--<service
+
+        <!--
+            <service
             android:name="com.flyme.systemuitools.launcher.RedPointService"
-            android:exported="true" />-->
+            android:exported="true" />
+        -->
 
-        <!--<activity android:name="cc.kenai.projectX.launcher.CreateShortcutTest"
+
+        <!--
+        <activity android:name="cc.kenai.projectX.launcher.CreateShortcutTest"
             android:label="NewShortcut">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -265,7 +302,29 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
+        -->
+        <receiver android:name=".launcher.NewAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/new_app_widget_info" />
+        </receiver>
+
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="cc.xxx"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+    </provider>
+
     </application>
 
 </manifest>
