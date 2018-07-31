@@ -25,7 +25,7 @@ object NotificationFilter {
                 sbn.packageName, "");
     }
 
-    fun needNoti(sbn: StatusBarNotification): Boolean {
+    fun needNoti(sbn: StatusBarNotification): NotiType? {
         val temp = buildRule(sbn);
         val result = mRulesRex.find {
             temp.pkg_limit.contains(it!!.pkg_limit) &&
@@ -35,10 +35,7 @@ object NotificationFilter {
                     (it.title == ANY || temp.title == it.title) &&
                     (it.text == ANY || temp.text == it.text)*/
         }
-        if (result != null) {
-            return true
-        }
-        return false
+        return if(result!=null) NotiType(result.type) else null
     }
 
     fun copyRules(): Array<Rule> {

@@ -71,11 +71,13 @@ object NotiHelperUtil {
         mNM?.cancel("notify", 110)
     }
 
+    private var existAlarm=false
     fun alarm(context: Context) {
         Log.e("@@@@", "alarm")
         if (mAM == null) {
             mAM = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         }
+        existAlarm = true
         mAM?.setExactAndAllowWhileIdle(ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime() + 3 * 60 * 1000,
                 PendingIntent.getBroadcast(context, 0, Intent(ACTION_ALARM), FLAG_UPDATE_CURRENT))
@@ -86,8 +88,11 @@ object NotiHelperUtil {
         if (mAM == null) {
             mAM = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         }
+        existAlarm = false
         mAM?.cancel(PendingIntent.getBroadcast(context, 0, Intent(ACTION_ALARM), FLAG_UPDATE_CURRENT))
     }
+
+    fun existAlarm()=existAlarm
 
     fun playAlarm(context: Context) {
         if (mPlayer != null) {

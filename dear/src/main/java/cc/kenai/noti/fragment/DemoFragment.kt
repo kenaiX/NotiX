@@ -17,10 +17,7 @@ import cc.kenai.noti.RuleEditActivity
 import cc.kenai.noti.XApplication
 import cc.kenai.noti.events.RuleCommit
 import cc.kenai.noti.events.RulesChanged
-import cc.kenai.noti.model.IconCache
-import cc.kenai.noti.model.NotificationFilter
-import cc.kenai.noti.model.Rule
-import cc.kenai.noti.model.RulesFactory
+import cc.kenai.noti.model.*
 import cc.kenai.noti.utils.NotiHelperUtil
 import com.hwangjr.rxbus.RxBus
 import com.hwangjr.rxbus.annotation.Subscribe
@@ -57,7 +54,7 @@ class DemoFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         val view = inflater!!.inflate(R.layout.demo_settings, container, false)
         view.findViewById<ListView>(R.id.list).also {
             mAdapter = RulesAdapter(this)
-            mAdapter.mRules.addAll((activity.application as XApplication).historyNotification.filter {
+            mAdapter.mRules.addAll(SuggestManager.getAll().filter {
                 IconCache.getAppInfo(it.pkg_limit) != null
             })
             it.adapter = mAdapter

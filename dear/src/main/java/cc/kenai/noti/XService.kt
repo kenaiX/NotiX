@@ -8,9 +8,10 @@ import android.content.IntentFilter
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import cc.kenai.noti.events.RulesChanged
+import cc.kenai.noti.model.NotiType
 import cc.kenai.noti.model.NotificationFilter
-import cc.kenai.noti.model.Rule
 import cc.kenai.noti.model.RulesFactory
+import cc.kenai.noti.model.SuggestManager
 import cc.kenai.noti.utils.NotiHelperUtil
 import cc.kenai.noti.utils.log
 import com.hwangjr.rxbus.RxBus
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit
 
 class XService : NotificationListenerService() {
 
-    private val mKeyList = ArrayList<String>()
+    private val mKeyMap = HashMap<String, NotiType>()
 
     private val mReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -46,14 +47,16 @@ class XService : NotificationListenerService() {
 
         log("onNotificationPosted");
 
-        if (NotificationFilter.needNoti(sbn)) {
+        val notiType = NotificationFilter.needNoti(sbn)
+
+        if (notiType != null) {
             val key = sbn2Key(sbn)
-            if (!mKeyList.contains(key)) {
-                mKeyList.add(key)
+            if (!mKeyMap.contains(key)) {
+                mKeyMap.put(key, notiType)
             }
             notifyIfNeed()
-        }else{
-            (application as XApplication).historyNotification.add(NotificationFilter.buildRule(sbn))
+        } else {
+            SuggestManager.add(NotificationFilter.buildRule(sbn))
         }
 
         (applicationContext as XApplication).xServiceCount = ++mPostedCount
@@ -65,8 +68,8 @@ class XService : NotificationListenerService() {
         }
         log("onNotificationRemoved");
         val key = sbn2Key(sbn)
-        if (mKeyList.contains(key)) {
-            mKeyList.remove(key)
+        if (mKeyMap.contains(key)) {
+            mKeyMap.remove(key)
             cancelNotifyIfNeed()
         }
     }
@@ -85,9 +88,10 @@ class XService : NotificationListenerService() {
         super.onListenerConnected()
 
         val activeNotifications = getActiveNotifications()
-        if(activeNotifications!=null&&activeNotifications.size>0) {
+        if (activeNotifications != null && activeNotifications.size > 0) {
             for (sbn in activeNotifications) {
-                (application as XApplication).historyNotification.add(NotificationFilter.buildRule(sbn))
+                SuggestManager.clear()
+                SuggestManager.add(NotificationFilter.buildRule(sbn))
             }
         }
     }
@@ -118,24 +122,55 @@ class XService : NotificationListenerService() {
         return sbn.key
     }
 
-    var mSubscribe: Disposable? = null
+    private var mSubscribe: Disposable? = null
 
     private fun notifyIfNeed() {
-        if (mSubscribe == null && mKeyList.size > 0) {
-            log("start notify")
-            mSubscribe = Observable.interval(0, 30, TimeUnit.SECONDS)
+        if (mKeyMap.size == 0) {
+            return
+        }
+
+        var needNoti = false
+        var needLoop = false
+        var needRing = false
+        for ((_, v) in mKeyMap) {
+            if (!needNoti && v.needNoti) {
+                needNoti = true
+            }
+            if (!needLoop && v.needLoop) {
+                needLoop = true
+            }
+            if (!needRing && v.needRing) {
+                needRing = true
+            }
+        }
+
+        if (mSubscribe == null && needLoop) {
+            log("start loop notify")
+            mSubscribe = Observable.interval(30, 30, TimeUnit.SECONDS)
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        if (mKeyList.size > 0) {
+                        if (mKeyMap.size > 0) {
                             NotiHelperUtil.ring(applicationContext)
+                        } else {
+                            cancelNotifyForce()
                         }
                     })
+            NotiHelperUtil.alarm(applicationContext)
+        }
+
+        if (needNoti) {
+            log("start notify")
+            NotiHelperUtil.ring(applicationContext)
+        }
+
+        if (needRing && !NotiHelperUtil.existAlarm()) {
+            log("start ring")
             NotiHelperUtil.alarm(applicationContext)
         }
     }
 
     private fun cancelNotifyIfNeed() {
-        if (mKeyList.size == 0) {
+        if (mKeyMap.size == 0) {
             log("stop notify")
             cancelNotifyForce()
         }
@@ -145,7 +180,7 @@ class XService : NotificationListenerService() {
         log("stop notify force")
         mSubscribe?.dispose()
         mSubscribe = null
-        mKeyList.clear();
+        mKeyMap.clear()
 
         NotiHelperUtil.cancelRing(applicationContext)
         NotiHelperUtil.cancelAlarm(applicationContext)
