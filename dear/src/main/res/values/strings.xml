@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Noti X</string>
+    <string name="shuomingshu">提醒方式支持特殊铃声提醒，多次循环提醒（半分钟循环一次），来电铃声提醒（3分钟延迟后出发来电铃声提醒）\n\n请授予悬浮窗权限和后台常驻权限</string>
 </resources>

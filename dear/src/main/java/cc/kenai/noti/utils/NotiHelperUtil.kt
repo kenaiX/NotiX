@@ -1,5 +1,6 @@
 package cc.kenai.noti.utils
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.app.AlarmManager.ELAPSED_REALTIME
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
@@ -16,10 +17,17 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.app.NotificationManager
 import android.app.NotificationChannel
+import android.graphics.Color
+import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Vibrator
+import android.view.Gravity
+import android.view.View
+import android.view.WindowManager
+import android.widget.TextView
 
 
+@SuppressLint("StaticFieldLeak")
 object NotiHelperUtil {
     const val ACTION_CANCEL_RING = "cc.kenai.noti.action.CANCEL_RING"
     const val ACTION_ALARM = "cc.kenai.noti.action.ALARM"
@@ -51,6 +59,7 @@ object NotiHelperUtil {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("点击取消响铃")
                 .setContentText("点击取消响铃")
+                .setSmallIcon(R.drawable.ic_status)
                 .setAutoCancel(true)
                 .setContentIntent(PendingIntent.getBroadcast(context, 0, Intent(ACTION_CANCEL_RING), 0))
                 .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring))
@@ -71,7 +80,7 @@ object NotiHelperUtil {
         mNM?.cancel("notify", 110)
     }
 
-    private var existAlarm=false
+    private var existAlarm = false
     fun alarm(context: Context) {
         Log.e("@@@@", "alarm")
         if (mAM == null) {
@@ -79,7 +88,7 @@ object NotiHelperUtil {
         }
         existAlarm = true
         mAM?.setExactAndAllowWhileIdle(ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + 3 * 60 * 1000,
+                SystemClock.elapsedRealtime() + 10 * 1000,
                 PendingIntent.getBroadcast(context, 0, Intent(ACTION_ALARM), FLAG_UPDATE_CURRENT))
     }
 
@@ -92,7 +101,7 @@ object NotiHelperUtil {
         mAM?.cancel(PendingIntent.getBroadcast(context, 0, Intent(ACTION_ALARM), FLAG_UPDATE_CURRENT))
     }
 
-    fun existAlarm()=existAlarm
+    fun existAlarm() = existAlarm
 
     fun playAlarm(context: Context) {
         if (mPlayer != null) {
@@ -108,15 +117,56 @@ object NotiHelperUtil {
         } catch (e: Exception) {
         }
         mPlayer?.start()
+        showAlarm(context)
     }
 
-    fun stopPlayAlarm() {
+    fun stopPlayAlarm(context: Context) {
         mPlayer?.stop()
         mPlayer?.release()
         mPlayer = null
+        hideAlarm(context)
     }
 
-    fun testNoti(context: Context){
+    var mAlarmView:View? = null
+
+    fun showAlarm(context: Context) {
+        val temp = TextView(context)
+        temp.setText("点击停止响铃")
+        temp.setBackgroundColor(Color.BLACK)
+        temp.gravity = Gravity.CENTER
+
+        val layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.TYPE_SYSTEM_ERROR)
+        layoutParams.title = "Noti X"
+
+        val metrics = context.getResources().getDisplayMetrics()
+        layoutParams.width = metrics.widthPixels
+        layoutParams.height = metrics.heightPixels
+
+        layoutParams.format = PixelFormat.RGBA_8888
+        layoutParams.gravity = Gravity.CENTER
+        layoutParams.flags = (WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                or WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
+                or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+        //layoutParams.meizuParams.flags |= MeizuLayoutParams.MEIZU_FLAG_DISABLE_HIDING_ON_FULL_SCREEN;
+
+        try {
+            val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            wm.addView(temp, layoutParams)
+            mAlarmView = temp
+        } catch (e: Exception) {
+        }
+    }
+
+    fun hideAlarm(context: Context){
+        if(mAlarmView!=null) {
+            val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            wm.removeView(mAlarmView)
+            mAlarmView = null
+        }
+    }
+
+    fun testNoti(context: Context) {
         Log.e("@@@@", "test")
         if (mNM == null) {
             mNM = NotificationManagerCompat.from(context)
@@ -131,6 +181,7 @@ object NotiHelperUtil {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("testTitle")
                 .setContentText("testText")
+                .setSmallIcon(R.drawable.ic_status)
                 .setAutoCancel(true)
                 .setContentIntent(PendingIntent.getBroadcast(context, 0, Intent("test"), 0))
                 .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring))

@@ -2,6 +2,7 @@ package cc.kenai.noti.model
 
 import android.app.Notification
 import android.service.notification.StatusBarNotification
+import cc.kenai.noti.utils.SystemProx
 
 object NotificationFilter {
     const val ANY = ".*"
@@ -20,9 +21,9 @@ object NotificationFilter {
 
     fun buildRule(sbn: StatusBarNotification): Rule {
         val notification = sbn.notification
-        return Rule(notification.extras.getCharSequence(Notification.EXTRA_TITLE).toString(),
-                notification.extras.getCharSequence(Notification.EXTRA_TEXT).toString(),
-                sbn.packageName, "");
+        return Rule(notification.extras.getCharSequence(Notification.EXTRA_TITLE,"").toString(),
+                notification.extras.getCharSequence(Notification.EXTRA_TEXT,"").toString(),
+                SystemProx.getOriginPkg(sbn), "");
     }
 
     fun needNoti(sbn: StatusBarNotification): NotiType? {
