@@ -54,6 +54,9 @@ class DemoFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         val view = inflater!!.inflate(R.layout.demo_settings, container, false)
         view.findViewById<ListView>(R.id.list).also {
             mAdapter = RulesAdapter(this)
+            mAdapter.mRules.addAll(SuggestManager.getAll().filter {
+                IconCache.getAppInfo(it.pkg_limit) != null
+            })
             it.adapter = mAdapter
         }
         return view

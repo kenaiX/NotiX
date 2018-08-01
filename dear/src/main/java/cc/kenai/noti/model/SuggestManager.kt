@@ -14,9 +14,14 @@ object SuggestManager {
 
     fun add(rule: Rule) {
         synchronized(mHistoryNotification) {
-            mHistoryNotification.addFirst(rule)
-            if (mHistoryNotification.size > 100) {
-                mHistoryNotification.removeLast()
+            val b = mHistoryNotification.find {
+                rule.pkg_limit == it.pkg_limit && rule.title == it.title && rule.text == it.text
+            }
+            if (b == null) {
+                mHistoryNotification.addFirst(rule)
+                if (mHistoryNotification.size > 100) {
+                    mHistoryNotification.removeLast()
+                }
             }
         }
     }

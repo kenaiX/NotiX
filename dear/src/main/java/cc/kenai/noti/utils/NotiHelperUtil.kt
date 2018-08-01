@@ -43,6 +43,26 @@ object NotiHelperUtil {
 
     var mVibrator: Vibrator? = null
 
+    fun buildForgroundNoti(context: Context):Notification{
+        if (mNM == null) {
+            mNM = NotificationManagerCompat.from(context)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC)
+            channel.setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring), null)
+            (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
+        }
+
+        return NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("running")
+                .setContentText("")
+                .setSmallIcon(R.drawable.ic_status)
+                .setContentIntent(PendingIntent.getBroadcast(context,0,Intent(),0))
+                .build()
+    }
+
     fun ring(context: Context) {
         Log.e("@@@@", "ring")
         if (mNM == null) {
@@ -57,10 +77,12 @@ object NotiHelperUtil {
         }
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("点击取消响铃")
-                .setContentText("点击取消响铃")
+                .setContentTitle("点击取消提醒")
+                .setContentText("点击取消提醒")
                 .setSmallIcon(R.drawable.ic_status)
                 .setAutoCancel(true)
+                .setOngoing(true)
+                .setOnlyAlertOnce(false)
                 .setContentIntent(PendingIntent.getBroadcast(context, 0, Intent(ACTION_CANCEL_RING), 0))
                 .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring))
                 .build()
@@ -88,7 +110,7 @@ object NotiHelperUtil {
         }
         existAlarm = true
         mAM?.setExactAndAllowWhileIdle(ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + 10 * 1000,
+                SystemClock.elapsedRealtime() + 3*60 * 1000,
                 PendingIntent.getBroadcast(context, 0, Intent(ACTION_ALARM), FLAG_UPDATE_CURRENT))
     }
 
@@ -134,6 +156,9 @@ object NotiHelperUtil {
         temp.setText("点击停止响铃")
         temp.setBackgroundColor(Color.BLACK)
         temp.gravity = Gravity.CENTER
+        temp.setOnClickListener {
+            stopPlayAlarm(it.context)
+        }
 
         val layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.TYPE_SYSTEM_ERROR)

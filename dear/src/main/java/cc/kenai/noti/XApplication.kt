@@ -1,6 +1,8 @@
 package cc.kenai.noti
 
 import android.app.Application
+import android.content.Intent
+import android.os.Build
 import android.support.v4.app.Fragment
 import cc.kenai.noti.events.ServiceEnableChangedEvent
 import cc.kenai.noti.model.IconCache
@@ -17,15 +19,19 @@ class XApplication : Application() {
         serviceEnable = getSharedPreferences("config", 0).getBoolean("enable", true)
         RxBus.get().register(this)
 
-
-        SystemProx.enableNotificationListenerService(this,true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        startForegroundService(Intent(this,WatchDogService::class.java))
+        }else{
+            startService(Intent(this,WatchDogService::class.java))
+        }
+        //SystemProx.enableNotificationListenerService(this,true)
     }
 
     @Subscribe
     fun onServiceEnableChanged(event: ServiceEnableChangedEvent) {
         serviceEnable = event.enable
         getSharedPreferences("config", 0).edit().putBoolean("enable", serviceEnable)
-        SystemProx.enableNotificationListenerService(this,serviceEnable)
+        //SystemProx.enableNotificationListenerService(this,serviceEnable)
     }
 }
 

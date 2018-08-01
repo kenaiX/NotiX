@@ -5,7 +5,7 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:name="cc.kenai.noti.XApplication"
@@ -14,7 +14,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="cc.kenai.noti.SettingsActivity"
+        <activity
+            android:name="cc.kenai.noti.SettingsActivity"
             android:autoRemoveFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,8 +25,8 @@
         </activity>
 
         <activity
-            android:theme="@style/RuleEditTheme"
-            android:name="cc.kenai.noti.RuleEditActivity"/>
+            android:name="cc.kenai.noti.RuleEditActivity"
+            android:theme="@style/RuleEditTheme" />
 
         <service
             android:name="cc.kenai.noti.XService"
@@ -38,8 +39,11 @@
         <receiver android:name="cc.kenai.noti.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".WatchDogService"/>
     </application>
 
 </manifest>
