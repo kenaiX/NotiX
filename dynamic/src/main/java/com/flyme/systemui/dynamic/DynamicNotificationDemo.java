@@ -508,7 +508,6 @@ public class DynamicNotificationDemo extends AppCompatActivity {
         mNM.notify(7, notification);
     }
 
-
     private void lockActivityInRecents(){
         Intent intent = new Intent();
         intent.setClassName("com.android.systemui","com.flyme.systemui.recents.RecentsRemoteService");

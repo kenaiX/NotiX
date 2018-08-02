@@ -9,18 +9,17 @@ import android.os.Bundle
 import android.os.IBinder
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatEditText
-import android.support.v7.widget.AppCompatTextView
 import android.text.TextUtils
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import cc.kenai.noti.events.RuleCommit
 import cc.kenai.noti.model.IconCache
 import cc.kenai.noti.model.NotificationFilter
 import cc.kenai.noti.model.RulesFactory
-import com.hwangjr.rxbus.RxBus
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import cc.kenai.noti.view.NotiTypeViewGroup
+import com.hwangjr.rxbus.RxBus
 import com.meizu.flyme.launcher.IExternalService
 import java.text.Collator
 import java.util.*
@@ -69,11 +68,11 @@ class RuleEditActivity : AppCompatActivity() {
             rule.type = mTypeGroup.getType()
 
             //检查
-            if(rule.title.isEmpty()){
+            if (rule.title.isEmpty()) {
                 rule.title = NotificationFilter.ANY
             }
             //检查
-            if(rule.text.isEmpty()){
+            if (rule.text.isEmpty()) {
                 rule.text = NotificationFilter.ANY
             }
 

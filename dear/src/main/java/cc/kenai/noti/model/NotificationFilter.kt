@@ -21,8 +21,8 @@ object NotificationFilter {
 
     fun buildRule(sbn: StatusBarNotification): Rule {
         val notification = sbn.notification
-        return Rule(notification.extras.getCharSequence(Notification.EXTRA_TITLE,"").toString(),
-                notification.extras.getCharSequence(Notification.EXTRA_TEXT,"").toString(),
+        return Rule(notification.extras.getCharSequence(Notification.EXTRA_TITLE, "").toString(),
+                notification.extras.getCharSequence(Notification.EXTRA_TEXT, "").toString(),
                 SystemProx.getOriginPkg(sbn), "");
     }
 
@@ -36,7 +36,7 @@ object NotificationFilter {
                     (it.title == ANY || temp.title == it.title) &&
                     (it.text == ANY || temp.text == it.text)*/
         }
-        return if(result!=null) NotiType(result.type) else null
+        return if (result != null) NotiType(result.type) else null
     }
 
     fun copyRules(): Array<Rule> {

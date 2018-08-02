@@ -6,25 +6,25 @@ import android.app.AlarmManager.ELAPSED_REALTIME
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
-import android.media.AudioManager
-import android.media.MediaPlayer
-import android.net.Uri
-import android.os.SystemClock
-import android.util.Log
-import cc.kenai.noti.R
-import android.media.RingtoneManager
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
-import android.app.NotificationManager
-import android.app.NotificationChannel
 import android.graphics.Color
 import android.graphics.PixelFormat
+import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.MediaPlayer
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
+import android.os.SystemClock
 import android.os.Vibrator
+import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
+import android.util.Log
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
-import android.widget.TextView
+import cc.kenai.noti.R
+import cc.kenai.noti.view.RingView
 
 
 @SuppressLint("StaticFieldLeak")
@@ -40,10 +40,24 @@ object NotiHelperUtil {
     var mAM: AlarmManager? = null
 
     var mPlayer: MediaPlayer? = null
+    var mNotiPlayer = MediaPlayer()
 
     var mVibrator: Vibrator? = null
 
-    fun buildForgroundNoti(context: Context):Notification{
+    fun init(context: Context) {
+        mNotiPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring))
+        mNotiPlayer.isLooping = false
+        mNotiPlayer.setVolume(0.5f, 0.5f)
+        mNotiPlayer.setAudioStreamType(AudioManager.STREAM_ALARM)
+        try {
+            mNotiPlayer.prepare()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        mNotiPlayer.setOnCompletionListener { mPlayingNotiFlag = false }
+    }
+
+    fun buildForgroundNoti(context: Context): Notification {
         if (mNM == null) {
             mNM = NotificationManagerCompat.from(context)
         }
@@ -59,7 +73,7 @@ object NotiHelperUtil {
                 .setContentTitle("running")
                 .setContentText("")
                 .setSmallIcon(R.drawable.ic_status)
-                .setContentIntent(PendingIntent.getBroadcast(context,0,Intent(),0))
+                .setContentIntent(PendingIntent.getBroadcast(context, 0, Intent(), 0))
                 .build()
     }
 
@@ -92,6 +106,7 @@ object NotiHelperUtil {
             mVibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
         mVibrator?.vibrate(longArrayOf(0, 666), -1)
+        playNoti(context)
     }
 
     fun cancelRing(context: Context) {
@@ -110,7 +125,7 @@ object NotiHelperUtil {
         }
         existAlarm = true
         mAM?.setExactAndAllowWhileIdle(ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + 3*60 * 1000,
+                SystemClock.elapsedRealtime() + 3 * 60 * 1000,
                 PendingIntent.getBroadcast(context, 0, Intent(ACTION_ALARM), FLAG_UPDATE_CURRENT))
     }
 
@@ -125,6 +140,18 @@ object NotiHelperUtil {
 
     fun existAlarm() = existAlarm
 
+private var mPlayingNotiFlag = false
+
+    fun playNoti(context: Context) {
+        if (mPlayingNotiFlag) {
+            return
+        }
+        mPlayingNotiFlag = true
+        mNotiPlayer.start()
+        val volume = ConfigHelper.volume
+        mNotiPlayer.setVolume(volume, volume)
+    }
+
     fun playAlarm(context: Context) {
         if (mPlayer != null) {
             return
@@ -133,10 +160,13 @@ object NotiHelperUtil {
         mPlayer = MediaPlayer()
         mPlayer?.setDataSource(context, getSystemDefultRingtoneUri(context))
         mPlayer?.isLooping = true
+        val volume = ConfigHelper.volume
+        mPlayer?.setVolume(volume, volume)
         mPlayer?.setAudioStreamType(AudioManager.STREAM_ALARM)
         try {
             mPlayer?.prepare()
         } catch (e: Exception) {
+            e.printStackTrace()
         }
         mPlayer?.start()
         showAlarm(context)
@@ -149,16 +179,23 @@ object NotiHelperUtil {
         hideAlarm(context)
     }
 
-    var mAlarmView:View? = null
+    var mAlarmView: View? = null
 
     fun showAlarm(context: Context) {
-        val temp = TextView(context)
+        val temp = RingView(context)
         temp.setText("点击停止响铃")
+        temp.setTextColor(Color.WHITE)
         temp.setBackgroundColor(Color.BLACK)
         temp.gravity = Gravity.CENTER
         temp.setOnClickListener {
             stopPlayAlarm(it.context)
         }
+        temp.setOnKeyListener(object : View.OnKeyListener {
+            override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
+                stopPlayAlarm(v.context)
+                return true
+            }
+        })
 
         val layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.TYPE_SYSTEM_ERROR)
@@ -183,8 +220,8 @@ object NotiHelperUtil {
         }
     }
 
-    fun hideAlarm(context: Context){
-        if(mAlarmView!=null) {
+    fun hideAlarm(context: Context) {
+        if (mAlarmView != null) {
             val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             wm.removeView(mAlarmView)
             mAlarmView = null

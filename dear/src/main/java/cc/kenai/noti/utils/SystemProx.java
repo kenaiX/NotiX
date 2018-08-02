@@ -1,15 +1,11 @@
 package cc.kenai.noti.utils;
 
 import android.app.Application;
-import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Context;
-import android.os.RemoteException;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import android.util.Log;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import cc.kenai.noti.XService;
@@ -46,7 +42,7 @@ public class SystemProx {
         }
     }
 
-    public static String getOriginPkg(StatusBarNotification sbn){
+    public static String getOriginPkg(StatusBarNotification sbn) {
         try {
             Method method = StatusBarNotification.class.getMethod("getOrigPackageName");
             return (String) method.invoke(sbn);

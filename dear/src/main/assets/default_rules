@@ -1,4 +1,4 @@
-{"title":"sunshine","text":".*","pkg_limit":"com.tencent.mm","type":"noti|loop|ring|screen"}
-{"title":"西小北","text":".*","pkg_limit":"com.alibaba.android.rimet","type":"noti|loop|ring|screen"}
+{"title":"姓名","text":".*","pkg_limit":"com.tencent.mm","type":"noti|loop"}
+{"title":"姓名","text":".*","pkg_limit":"com.alibaba.android.rimet","type":"noti|loop"}
 {"title":"testTitle","text":"testText","pkg_limit":"com.meizu.input.test","type":"noti|loop|ring|screen"}
-{"title":".*","text":"@我","pkg_limit":".*","type":"noti|loop|ring|screen"}
+{"title":".*","text":"@","pkg_limit":".*","type":"noti|loop"}

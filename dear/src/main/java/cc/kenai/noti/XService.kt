@@ -14,6 +14,7 @@ import cc.kenai.noti.model.NotiType
 import cc.kenai.noti.model.NotificationFilter
 import cc.kenai.noti.model.RulesFactory
 import cc.kenai.noti.model.SuggestManager
+import cc.kenai.noti.utils.ConfigHelper
 import cc.kenai.noti.utils.NotiHelperUtil
 import cc.kenai.noti.utils.log
 import com.hwangjr.rxbus.RxBus
@@ -34,7 +35,15 @@ class XService : NotificationListenerService() {
             if (NotiHelperUtil.ACTION_CANCEL_RING == action) {
                 cancelNotifyForce()
             } else if (NotiHelperUtil.ACTION_ALARM == action) {
-                NotiHelperUtil.playAlarm(mContext)
+                NotiHelperUtil.cancelAlarm(context)
+                if (mKeyMap.size > 0) {
+                    for ((_, v) in mKeyMap) {
+                        if (v.needRing) {
+                            NotiHelperUtil.playAlarm(mContext)
+                            return
+                        }
+                    }
+                }
             }
         }
 
@@ -122,7 +131,7 @@ class XService : NotificationListenerService() {
         event.rule.forEach {
             sb.append(RulesFactory.rule2json(it)).append("\n")
         }
-        getSharedPreferences("config", 0).edit().putString("rules", sb.toString()).apply()
+        ConfigHelper.preferences.edit().putString("rules", sb.toString()).apply()
         NotificationFilter.setupRules(event.rule)
     }
 
@@ -182,7 +191,6 @@ class XService : NotificationListenerService() {
                         }
                         cancelNotifyForce()
                     })
-            NotiHelperUtil.alarm(mContext)
         }
 
         if (needNoti) {
@@ -193,16 +201,6 @@ class XService : NotificationListenerService() {
         if (needRing && !NotiHelperUtil.existAlarm()) {
             log("start ring")
             NotiHelperUtil.alarm(mContext)
-        }
-
-        if (needNoti) {
-            log("start notify")
-            NotiHelperUtil.ring(applicationContext)
-        }
-
-        if (needRing && !NotiHelperUtil.existAlarm()) {
-            log("start ring")
-            NotiHelperUtil.alarm(applicationContext)
         }
     }
 

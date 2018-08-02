@@ -2,6 +2,8 @@ package cc.kenai.noti.model
 
 import android.app.Application
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import cc.kenai.noti.R
 
@@ -18,9 +20,14 @@ object IconCache {
         mDefaultDrawable = context.resources.getDrawable(R.mipmap.ic_launcher)
     }
 
-    fun connect(context: Context) {
+    fun connect(context: Context, callback: Runnable? = null) {
         mConnectIndex++
-        Thread(Runnable { loadAllApps() }).start()
+        Thread(Runnable {
+            loadAllApps()
+            if (callback != null) {
+                callback.run()
+            }
+        }).start()
     }
 
     fun release() {
@@ -43,7 +50,7 @@ object IconCache {
         synchronized(mLock) {
             val result = ArrayList<AppInfo>((mIconMap.size * 1.6f).toInt())
             for ((_, v) in mIconMap) {
-                result.add( AppInfo(v.pkg, v.name, v.icon))
+                result.add(AppInfo(v.pkg, v.name, v.icon))
             }
             return result
         }
@@ -52,7 +59,7 @@ object IconCache {
     fun loadAllApps() {
         val manager = mContext.packageManager
         synchronized(mLock) {
-            mIconMap.put(NotificationFilter.ANY, AppInfo(NotificationFilter.ANY, "任意", mDefaultDrawable))
+            mIconMap.put(NotificationFilter.ANY, AppInfo(NotificationFilter.ANY, "任意", ColorDrawable(Color.TRANSPARENT)))
             manager.getInstalledApplications(0).forEach {
                 mIconMap.put(it.packageName,
                         AppInfo(it.packageName, it.loadLabel(manager).toString(),

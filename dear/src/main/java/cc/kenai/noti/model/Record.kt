@@ -6,7 +6,7 @@ data class Record(var id: Long, var type: Int, var limit: Long, var question: St
     companion object {
         fun fromString(s: String): Record? {
             val split = s.split("|")
-            if(split.size!=5){
+            if (split.size != 5) {
                 return null
             }
 
@@ -17,8 +17,8 @@ data class Record(var id: Long, var type: Int, var limit: Long, var question: St
             val answer = split[4]
 
             try {
-                return Record(id.toLong(),type.toInt(),limit.toLong(),question,answer)
-            }catch (e:Exception){
+                return Record(id.toLong(), type.toInt(), limit.toLong(), question, answer)
+            } catch (e: Exception) {
                 return null
             }
         }

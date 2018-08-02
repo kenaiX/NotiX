@@ -70,10 +70,6 @@ class FilterSettingsFragment : Fragment(), View.OnClickListener, View.OnLongClic
     lateinit var mAdapter: RulesAdapter
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.filter_settings, container, false)
-        view.findViewById<TextView>(R.id.text).also {
-            it.setText("点击发送测试通知")
-            it.setOnClickListener({ NotiHelperUtil.testNoti(activity) })
-        }
         view.findViewById<ListView>(R.id.list).also {
             mAdapter = RulesAdapter(this)
             mAdapter.mRules.addAll(RulesFactory.loadRules(activity).filter {
@@ -130,8 +126,13 @@ class FilterSettingsFragment : Fragment(), View.OnClickListener, View.OnLongClic
             val appInfo = IconCache.getAppInfo(rule.pkg_limit)
             if (appInfo != null) {
                 result.findViewById<ImageView>(R.id.pkg).setImageDrawable(appInfo.icon)
+                result.findViewById<TextView>(R.id.pkg_title).also {
+                    it.setTextColor(Color.GREEN)
+                    it.setText(appInfo.name)
+                }
             } else {
                 result.findViewById<ImageView>(R.id.pkg).setImageDrawable(null)
+                result.findViewById<TextView>(R.id.pkg_title).setText("")
             }
             result.findViewById<TextView>(R.id.title).also {
                 if (rule.title == NotificationFilter.ANY) {

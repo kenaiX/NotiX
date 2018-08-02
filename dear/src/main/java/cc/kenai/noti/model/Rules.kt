@@ -25,11 +25,11 @@ data class RuleRex(var title: Regex, var text: Regex, var pkg_limit: Regex, var 
     }
 }
 
-class NotiType(val type: String){
-    val needNoti:Boolean
-    val needLoop:Boolean
-    val needRing:Boolean
-    val needScreen:Boolean
+class NotiType(val type: String) {
+    val needNoti: Boolean
+    val needLoop: Boolean
+    val needRing: Boolean
+    val needScreen: Boolean
 
     init {
         needNoti = type.contains("noti")

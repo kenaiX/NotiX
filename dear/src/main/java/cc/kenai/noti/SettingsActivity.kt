@@ -10,13 +10,27 @@ import cc.kenai.noti.fragment.DemoFragment
 import cc.kenai.noti.fragment.FilterSettingsFragment
 import cc.kenai.noti.fragment.GuideFragment
 import cc.kenai.noti.model.IconCache
+import java.lang.ref.WeakReference
 
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        IconCache.connect(this)
+        val activity = WeakReference<SettingsActivity>(this)
+        IconCache.connect(this, object : Runnable {
+            override fun run() {
+                activity.get()?.runOnUiThread { show() }
+            }
+        })
+        setContentView(R.layout.welcome_main)
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        IconCache.release()
+    }
+
+    fun show() {
         setContentView(R.layout.activity_main)
 
         val viewPager = findViewById<ViewPager>(R.id.view_pager)
@@ -35,7 +49,7 @@ class SettingsActivity : AppCompatActivity() {
             override fun getCount(): Int = 3
 
             override fun getPageTitle(position: Int): CharSequence {
-                return when(position){
+                return when (position) {
                     0 -> "状态"
                     1 -> "规则"
                     2 -> "建议"
@@ -48,10 +62,5 @@ class SettingsActivity : AppCompatActivity() {
         findViewById<TabLayout>(R.id.tab).also {
             it.setupWithViewPager(viewPager)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        IconCache.release()
     }
 }
