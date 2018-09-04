@@ -32,8 +32,8 @@ object NotiHelperUtil {
     const val ACTION_CANCEL_RING = "cc.kenai.noti.action.CANCEL_RING"
     const val ACTION_ALARM = "cc.kenai.noti.action.ALARM"
 
-    private const val CHANNEL_ID = "important_msg_ring_0"
-    private const val CHANNEL_NAME = "important_msg_ring"
+    private const val CHANNEL_ID = "important_msg_no_sound"
+    private const val CHANNEL_NAME = "important_msg_no_sound"
 
     var mNM: NotificationManagerCompat? = null
 
@@ -65,7 +65,7 @@ object NotiHelperUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
             channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC)
-            channel.setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring), null)
+            //channel.setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring), null)
             (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
         }
 

@@ -1,6 +1,7 @@
 //include ':animationdebug'
 //include ':app'
-include ':dear', ':recentscardtest'
+//include ':dear'
+include ':recentscardtest'
 //include ':childmode'
 //include ':dynamic'
 //include ':flymeicon'

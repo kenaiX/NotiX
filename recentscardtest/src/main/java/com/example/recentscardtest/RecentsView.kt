@@ -19,7 +19,7 @@ import android.view.animation.PathInterpolator
 
 class RecentsView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
 
-    val AFFILIATION_OFFSET = 0.2225f//卡片间相对距离，可以控制显示卡片的个数
+    val AFFILIATION_OFFSET = 0.295f//卡片间相对距离，可以控制显示卡片的个数
     var FITST_CARD = 0f
     val FITST_CARD_OFFSET = 0.07f
     val INIT_OFFSET_ONE_CARD = -0.13f
@@ -29,10 +29,10 @@ class RecentsView(context: Context, attrs: AttributeSet) : FrameLayout(context, 
     val mPosition = Array(10, { AFFILIATION_OFFSET * it })
     var mWidth: Int = 0
     val mOriginRect = RectF()
-    val scale = 0.63f
+    val scale = 0.64f
     var mDownP = 0f
     var mCurP = 0f
-    val margeLeft = 51
+    val margeLeft = 40
 
     val screens = arrayOf(R.drawable.screenshot_2, R.drawable.screenshot_3, R.drawable.screenshot_4, R.drawable.screenshot_5)
 
@@ -58,10 +58,11 @@ class RecentsView(context: Context, attrs: AttributeSet) : FrameLayout(context, 
             addView(it)
         }
 
-        val path = SvgPathParser().parsePath("M0,0 C0.108906984,0.0185910062 0.184768529,0.0334759888 0.227584635,0.0446549479 C0.324134115,0.0698632813 0.39750651,0.0947591146 0.451640625,0.143606771 C0.470559896,0.211731771 0.604316406,0.532291667 0.672669271,0.616542969 C0.728541667,0.691621094 0.797408854,0.76735026 0.89593099,0.882226562 C0.931577691,0.923615451 0.966267361,0.962873264 1,1")
+        val path = SvgPathParser().parsePath("M0,0 C0.153709311,0.0320159124 0.252385836,0.0519739561 0.296029576,0.059874131 C0.39660517,0.07807983 0.493718716,0.109928396 0.597149439,0.202892835 C0.700580162,0.295857275 0.832764483,0.5 0.892745035,0.694055608 C0.952725588,0.888111216 0.962279666,0.912615252 1,1")
         interpolatorForCard = PathInterpolator(path)
 
-        background = WallpaperManager.getInstance(context).drawable
+        background = resources.getDrawable(R.drawable.sc)
+        //background = WallpaperManager.getInstance(context).drawable
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -118,6 +119,8 @@ class RecentsView(context: Context, attrs: AttributeSet) : FrameLayout(context, 
                 val to = curveProgressToScreenX(offset) + margeLeft + (toScale - scale) / 2 * mWidth
                 mCard[i].translationX = to - mOriginRect.left
                 mCard[i].translationZ = curveProgressToScreenZ(offset)
+
+                //mCard[i].alpha = 0.5f
             } else {
                 mCard[i].visibility = View.INVISIBLE
             }
