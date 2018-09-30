@@ -102,11 +102,16 @@ object NotiHelperUtil {
                 .build()
         mNM?.notify("notify", 110, notification)
 
+        vibrate(context)
+
+        playNoti(context)
+    }
+
+    fun vibrate(context: Context){
         if (mVibrator == null) {
             mVibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
         mVibrator?.vibrate(longArrayOf(0, 666), -1)
-        playNoti(context)
     }
 
     fun cancelRing(context: Context) {

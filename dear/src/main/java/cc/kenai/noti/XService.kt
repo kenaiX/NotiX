@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.AudioManager
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import cc.kenai.noti.events.RulesChanged
@@ -65,7 +66,7 @@ class XService : NotificationListenerService() {
             if (!mKeyMap.contains(key)) {
                 mKeyMap.put(key, notiType)
             }
-            notifyIfNeed()
+            notifyIfNeed(key)
         } else {
             SuggestManager.add(NotificationFilter.buildRule(sbn))
         }
@@ -155,8 +156,9 @@ class XService : NotificationListenerService() {
     }
 
     private var mSubscribe: Disposable? = null
+    private var mDelayNotiSubscribe: Disposable? = null
 
-    private fun notifyIfNeed() {
+    private fun notifyIfNeed(key: String) {
         if (mKeyMap.size == 0) {
             return
         }
@@ -195,7 +197,24 @@ class XService : NotificationListenerService() {
 
         if (needNoti) {
             log("start notify")
-            NotiHelperUtil.ring(mContext)
+            //非静音状态下立即提醒，否则延时30s提醒
+            val audioManager = mContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            if (audioManager.ringerMode) {
+                NotiHelperUtil.vibrate(mContext)
+                Observable.timer(30, TimeUnit.SECONDS)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            mKeyMap.keys.find { it == key }?.let {
+                                mKeyMap[it]?.let {
+                                    if (it.needNoti && !it.needLoop) {
+                                        NotiHelperUtil.ring(mContext)
+                                    }
+                                }
+                            }
+                        })
+            } else {
+                NotiHelperUtil.ring(mContext)
+            }
         }
 
         if (needRing && !NotiHelperUtil.existAlarm()) {
