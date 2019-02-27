@@ -1,5 +1,9 @@
 package cc.kenai.noti
 
+import android.app.Activity
+import android.content.Intent
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -10,6 +14,7 @@ import cc.kenai.noti.fragment.DemoFragment
 import cc.kenai.noti.fragment.FilterSettingsFragment
 import cc.kenai.noti.fragment.GuideFragment
 import cc.kenai.noti.model.IconCache
+import cc.kenai.noti.utils.ConfigHelper
 import java.lang.ref.WeakReference
 
 class SettingsActivity : AppCompatActivity() {
@@ -28,6 +33,18 @@ class SettingsActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         IconCache.release()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        if (resultCode != Activity.RESULT_OK) return
+
+        if (requestCode == ConfigHelper.RESULT_ACTION_CHANGE_RING) {
+            val pickedUri = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+            //将我们选择的铃声设置成为默认
+            pickedUri?.run { ConfigHelper.onRingChangeReturn(this) }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     fun show() {

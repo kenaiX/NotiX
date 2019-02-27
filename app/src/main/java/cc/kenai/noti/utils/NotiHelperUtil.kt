@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PixelFormat
-import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
@@ -24,37 +23,52 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import cc.kenai.noti.R
+import cc.kenai.noti.events.RingSoundChangeEvent
 import cc.kenai.noti.view.RingView
-
+import com.hwangjr.rxbus.RxBus
+import com.hwangjr.rxbus.annotation.Subscribe
 
 @SuppressLint("StaticFieldLeak")
 object NotiHelperUtil {
     const val ACTION_CANCEL_RING = "cc.kenai.noti.action.CANCEL_RING"
     const val ACTION_ALARM = "cc.kenai.noti.action.ALARM"
 
-    private const val CHANNEL_ID = "important_msg_no_sound"
-    private const val CHANNEL_NAME = "important_msg_no_sound"
+    private const val CHANNEL_ID = "notix_no_sound"
+    private const val CHANNEL_NAME = "notix_no_sound"
 
-    var mNM: NotificationManagerCompat? = null
+    private var mNM: NotificationManagerCompat? = null
 
-    var mAM: AlarmManager? = null
+    private var mAM: AlarmManager? = null
+    private lateinit var mAudioManager: AudioManager
 
-    var mPlayer: MediaPlayer? = null
-    var mNotiPlayer = MediaPlayer()
+    private var mPlayer: MediaPlayer? = null
+    private var mNotiPlayer = MediaPlayer()
 
-    var mVibrator: Vibrator? = null
+    private var mVibrator: Vibrator? = null
+
+    private lateinit var mContext: Context
 
     fun init(context: Context) {
-        mNotiPlayer.setDataSource(context, Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring))
+        mContext = context.applicationContext
+        mAudioManager = context.getSystemService(AudioManager::class.java)
+        mNotiPlayer.setOnCompletionListener { mPlayingNotiFlag = false }
+
+        updateNotiPlayer(null)
+
+        RxBus.get().register(this)
+    }
+
+    @Subscribe
+    fun updateNotiPlayer(event: RingSoundChangeEvent?) {
+        mNotiPlayer.reset()
+        mNotiPlayer.setDataSource(mContext, ConfigHelper.ringUri)
         mNotiPlayer.isLooping = false
-        mNotiPlayer.setVolume(0.5f, 0.5f)
         mNotiPlayer.setAudioStreamType(AudioManager.STREAM_ALARM)
         try {
             mNotiPlayer.prepare()
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        mNotiPlayer.setOnCompletionListener { mPlayingNotiFlag = false }
     }
 
     fun buildForgroundNoti(context: Context): Notification {
@@ -62,12 +76,7 @@ object NotiHelperUtil {
             mNM = NotificationManagerCompat.from(context)
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
-            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC)
-            //channel.setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring), null)
-            (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
-        }
+        createNotiChannel(context)
 
         return NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("running")
@@ -77,37 +86,32 @@ object NotiHelperUtil {
                 .build()
     }
 
-    fun ring(context: Context) {
+
+    fun sendCancelNotification() {
         Log.e("@@@@", "ring")
         if (mNM == null) {
-            mNM = NotificationManagerCompat.from(context)
+            mNM = NotificationManagerCompat.from(mContext)
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
-            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC)
-            channel.setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring), null)
-            (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
-        }
-
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.mipmap.ic_launcher)
+        createNotiChannel(mContext)
+        val notification = NotificationCompat.Builder(mContext, CHANNEL_ID).setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("点击取消提醒")
                 .setContentText("点击取消提醒")
                 .setSmallIcon(R.drawable.ic_status)
-                .setAutoCancel(true)
-                .setOngoing(true)
+                //.setAutoCancel(true)
+                //.setOngoing(true)
                 .setOnlyAlertOnce(false)
-                .setContentIntent(PendingIntent.getBroadcast(context, 0, Intent(ACTION_CANCEL_RING), 0))
-                .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring))
+                .setDeleteIntent(PendingIntent.getBroadcast(mContext, 0, Intent(ACTION_CANCEL_RING), 0))
+                .setContentIntent(PendingIntent.getBroadcast(mContext, 0, Intent(ACTION_CANCEL_RING), 0))
                 .build()
         mNM?.notify("notify", 110, notification)
+        vibrate(mContext)
+    }
 
-        vibrate(context)
-
+    fun ring(context: Context) {
         playNoti(context)
     }
 
-    fun vibrate(context: Context){
+    fun vibrate(context: Context) {
         if (mVibrator == null) {
             mVibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
@@ -145,16 +149,15 @@ object NotiHelperUtil {
 
     fun existAlarm() = existAlarm
 
-private var mPlayingNotiFlag = false
+    private var mPlayingNotiFlag = false
 
     fun playNoti(context: Context) {
         if (mPlayingNotiFlag) {
             return
         }
         mPlayingNotiFlag = true
+        setVolume(ConfigHelper.volume)
         mNotiPlayer.start()
-        val volume = ConfigHelper.volume
-        mNotiPlayer.setVolume(volume, volume)
     }
 
     fun playAlarm(context: Context) {
@@ -165,9 +168,8 @@ private var mPlayingNotiFlag = false
         mPlayer = MediaPlayer()
         mPlayer?.setDataSource(context, getSystemDefultRingtoneUri(context))
         mPlayer?.isLooping = true
-        val volume = ConfigHelper.volume
-        mPlayer?.setVolume(volume, volume)
         mPlayer?.setAudioStreamType(AudioManager.STREAM_ALARM)
+        setVolume(ConfigHelper.volume)
         try {
             mPlayer?.prepare()
         } catch (e: Exception) {
@@ -238,12 +240,8 @@ private var mPlayingNotiFlag = false
         if (mNM == null) {
             mNM = NotificationManagerCompat.from(context)
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
-            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC)
-            channel.setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring), null)
-            (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
-        }
+
+        createNotiChannel(context)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("testTitle")
@@ -251,12 +249,41 @@ private var mPlayingNotiFlag = false
                 .setSmallIcon(R.drawable.ic_status)
                 .setAutoCancel(true)
                 .setContentIntent(PendingIntent.getBroadcast(context, 0, Intent("test"), 0))
-                .setSound(Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.ring))
                 .build()
         mNM?.notify("notify", 999, notification)
     }
 
     private fun getSystemDefultRingtoneUri(context: Context): Uri {
         return RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE)
+    }
+
+    private fun createNotiChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC)
+            (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
+        }
+    }
+
+    private fun setVolume(scale: Float) {
+        var max = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
+        var volume = (scale * max).toInt()
+        if (volume < 1) {
+            volume = 1
+        } else if (volume > max) {
+            volume = max
+        }
+        mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume, 0)
+    }
+
+    private fun getVolumeScale(): Float {
+        var volume = mAudioManager.getStreamVolume(AudioManager.STREAM_ALARM);
+        var max = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
+        if (volume == 0) {
+            mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, 1, 0)
+            volume = 1;
+        }
+        val scale = volume.toFloat() / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
+        return scale
     }
 }

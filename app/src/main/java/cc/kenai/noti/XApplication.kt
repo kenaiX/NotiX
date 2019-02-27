@@ -59,6 +59,7 @@ class XApplication : Application() {
                 }
 
             }
+
             override fun onServiceDisconnected(name: ComponentName) {
 
             }

@@ -23,7 +23,6 @@ import com.hwangjr.rxbus.annotation.Subscribe
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import java.lang.StringBuilder
 import java.util.concurrent.TimeUnit
 
 class XService : NotificationListenerService() {
@@ -49,8 +48,6 @@ class XService : NotificationListenerService() {
         }
 
     }
-
-    private var mPostedCount = 0L
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         if (sbn == null) {
@@ -186,6 +183,7 @@ class XService : NotificationListenerService() {
                         if (mKeyMap.size > 0) {
                             for ((_, v) in mKeyMap) {
                                 if (v.needLoop) {
+                                    NotiHelperUtil.sendCancelNotification()
                                     NotiHelperUtil.ring(mContext)
                                     return@subscribe
                                 }
@@ -199,7 +197,7 @@ class XService : NotificationListenerService() {
             log("start notify")
             //非静音状态下立即提醒，否则延时30s提醒
             val audioManager = mContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            if (audioManager.ringerMode) {
+            if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL) {
                 NotiHelperUtil.vibrate(mContext)
                 Observable.timer(30, TimeUnit.SECONDS)
                         .subscribeOn(AndroidSchedulers.mainThread())
@@ -215,6 +213,7 @@ class XService : NotificationListenerService() {
             } else {
                 NotiHelperUtil.ring(mContext)
             }
+            NotiHelperUtil.sendCancelNotification()
         }
 
         if (needRing && !NotiHelperUtil.existAlarm()) {

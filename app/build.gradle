@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.meizu.input.test"
+        applicationId "cc.kenai.notix"
         minSdkVersion 23
         targetSdkVersion 26
         versionCode 2

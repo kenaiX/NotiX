@@ -1,21 +1,20 @@
 package cc.kenai.noti.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.AppCompatSeekBar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.SeekBar
 import cc.kenai.noti.R
 import cc.kenai.noti.events.ServiceEnableChangedEvent
 import cc.kenai.noti.getXApplication
-import com.hwangjr.rxbus.RxBus
-import android.content.Intent
-import android.support.v7.widget.AppCompatSeekBar
-import android.widget.SeekBar
-import android.widget.TextView
 import cc.kenai.noti.utils.ConfigHelper
 import cc.kenai.noti.utils.NotiHelperUtil
+import com.hwangjr.rxbus.RxBus
 
 
 class GuideFragment : Fragment() {
@@ -38,8 +37,15 @@ class GuideFragment : Fragment() {
                 activity.startActivity(intent)
             }
         }
+        view.findViewById<Button>(R.id.button_change_ring).run {
+            setText("选择提示音")
+            setOnClickListener {
+                ConfigHelper.changeRingSound(activity)
+            }
+        }
+
         view.findViewById<AppCompatSeekBar>(R.id.seekbar_v).also {
-            it.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            it.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 
                 }
@@ -48,16 +54,16 @@ class GuideFragment : Fragment() {
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    ConfigHelper.volume = seekBar.progress/100f
+                    ConfigHelper.volume = seekBar.progress / 100f
                     NotiHelperUtil.playNoti(seekBar.context)
                 }
             })
-            it.setProgress((ConfigHelper.volume*100).toInt())
+            it.setProgress((ConfigHelper.volume * 100).toInt())
             it.max = 100
         }
 
         view.findViewById<Button>(R.id.button_test).also {
-            it.setOnClickListener({ NotiHelperUtil.testNoti(activity) })
+            it.setOnClickListener({ NotiHelperUtil.testNoti(context) })
         }
 
         return view

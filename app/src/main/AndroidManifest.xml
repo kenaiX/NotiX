@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cc.kenai.noti"
-    android:sharedUserId="android.uid.systemui">
+    package="cc.kenai.noti">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -30,13 +29,13 @@
             android:name="cc.kenai.noti.RuleEditActivity"
             android:theme="@style/RuleEditTheme" />
 
-        <!--<service
+        <service
             android:name="cc.kenai.noti.XService"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
-        </service>-->
+        </service>
 
         <receiver android:name="cc.kenai.noti.BootReceiver">
             <intent-filter>

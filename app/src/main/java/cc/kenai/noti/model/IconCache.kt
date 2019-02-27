@@ -1,6 +1,5 @@
 package cc.kenai.noti.model
 
-import android.app.Application
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -15,7 +14,7 @@ object IconCache {
 
     private val mLock = Any()
 
-    fun init(context: Application) {
+    fun init(context: Context) {
         mContext = context
         mDefaultDrawable = context.resources.getDrawable(R.mipmap.ic_launcher)
     }
